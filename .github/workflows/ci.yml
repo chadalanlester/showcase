@@ -4,11 +4,9 @@ name: CI
 "on":
   workflow_dispatch: {}
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
+    branches: [ main ]
 
 jobs:
   yamllint:
@@ -17,12 +15,36 @@ jobs:
       - uses: actions/checkout@v4
       - name: Run yamllint
         run: docker run --rm -v "$PWD:/wrk" cytopia/yamllint:latest /wrk
+
   terraform:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Terraform Init & Validate
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5
+
+      - name: Init+Validate all Terraform modules
+        shell: bash
         run: |
-          cd terraform || exit 0
-          terraform init -backend=false
-          terraform validate || true
+          set -e
+          ROOTS=()
+          # add any Terraform roots you want validated here
+          [[ -d project-1-multicloud-gitops/terraform/aws-eks ]] && ROOTS+=("project-1-multicloud-gitops/terraform/aws-eks")
+          [[ -d project-1-multicloud-gitops/terraform/gcp-gke ]] && ROOTS+=("project-1-multicloud-gitops/terraform/gcp-gke")
+
+          if [[ ${#ROOTS[@]} -eq 0 ]]; then
+            echo "No Terraform directories found. Skipping."
+            exit 0
+          fi
+
+          for d in "${ROOTS[@]}"; do
+            echo "==> $d"
+            pushd "$d" >/dev/null
+            terraform init -backend=false
+            terraform fmt -check
+            terraform validate || true
+            popd >/dev/null
+          done
