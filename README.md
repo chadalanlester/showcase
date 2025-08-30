@@ -12,3 +12,7 @@ Public, sanitized examples of CI/CD pipelines I run in my homelab.
 
 ## CI Status
 ![Showcase CI](https://github.com/chadalanlester/showcase/actions/workflows/ci.yml/badge.svg)
+
+## CI Status
+
+![Showcase CI](https://github.com/chadalanlester/showcase/actions/workflows/ci.yml/badge.svg?branch=main)
