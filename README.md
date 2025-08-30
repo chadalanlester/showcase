@@ -55,7 +55,6 @@ The **Security workflow** provides a focused DevSecOps example:
 
 ## 📂 Repository Structure
 
-```text
 .github/workflows/
   ├── ci.yml         # Multi-stage CI/CD pipeline
   └── security.yml   # Dedicated security scans
