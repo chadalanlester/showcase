@@ -85,12 +85,16 @@ README.md            # This document
 
 ---
 
-## 📖 Notes
+## 📝 Notes
 
-- **Terraform** code uses `null_resource` only → safe and non-destructive.  
-- **Ansible** playbook contains a simple `debug` message → illustrates CI integration, but does not target real hosts.  
-- **Badges** reflect the current status of CI and security scans on the `main` branch.  
+- **Terraform**  
+  Uses only `null_resource` → safe and non-destructive.
 
+- **Ansible**  
+  Playbook contains a simple `debug` message → illustrates CI integration, but does not target real hosts.
+
+- **Badges**  
+  Reflect the current status of CI and security scans on the `main` branch.
 ---
 
 ## 👀 For Employers
