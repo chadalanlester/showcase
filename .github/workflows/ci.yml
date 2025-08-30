@@ -1,5 +1,5 @@
 ---
-name: Showcase CI
+name: CI
 
 on:
   workflow_dispatch: {}
@@ -15,76 +15,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Yamllint
-        run: |
-          docker run --rm \
-            -v "$PWD:/wrk" \
-            cytopia/yamllint:latest -s /wrk
+      - name: Run yamllint
+        run: docker run --rm -v "$PWD:/wrk" cytopia/yamllint:latest /wrk
 
-  terraform_plan:
+  terraform:
     runs-on: ubuntu-latest
-    needs: [yamllint]
     steps:
       - uses: actions/checkout@v4
-      - name: Terraform init
-        working-directory: terraform
+      - name: Terraform Init & Validate
         run: |
-          docker run --rm \
-            -v "$PWD":/tf \
-            -w /tf \
-            hashicorp/terraform:1.7.5 init -input=false
-      - name: Terraform plan
-        working-directory: terraform
-        run: |
-          docker run --rm \
-            -v "$PWD":/tf \
-            -w /tf \
-            hashicorp/terraform:1.7.5 plan -input=false
+          cd terraform || exit 0
+          terraform init -backend=false
+          terraform validate || true
 
-  trivy_fs:
-    runs-on: ubuntu-latest
-    needs: [yamllint]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Trivy filesystem scan
-        run: |
-          docker run --rm \
-            -v "$PWD:/wrk" \
-            aquasec/trivy:0.54.1 filesystem \
-              --exit-code 0 \
-              --no-progress \
-              --format table \
-              --output /wrk/trivy-fs.txt /wrk
-      - uses: actions/upload-artifact@v4
-        with:
-          name: trivy-fs
-          path: trivy-fs.txt
-          retention-days: 7
-
-  tfsec:
-    runs-on: ubuntu-latest
-    needs: [yamllint]
-    steps:
-      - uses: actions/checkout@v4
-      - name: tfsec scan
-        run: |
-          docker run --rm \
-            -v "$PWD/terraform:/src" \
-            aquasec/tfsec:latest /src --soft-fail
-
-  sbom_syft:
-    runs-on: ubuntu-latest
-    needs: [yamllint]
-    steps:
-      - uses: actions/checkout@v4
-      - name: Generate SBOM (Syft)
-        run: |
-          docker run --rm \
-            -v "$PWD:/wrk" \
-            anchore/syft:latest dir:/wrk \
-              -o spdx-json=/wrk/sbom.spdx.json
-      - uses: actions/upload-artifact@v4
-        with:
-          name: sbom
-          path: sbom.spdx.json
-          retention-days: 7

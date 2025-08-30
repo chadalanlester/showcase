@@ -1,5 +1,6 @@
 ---
 name: Security Scans
+
 on:
   workflow_dispatch: {}
   push:
@@ -17,7 +18,8 @@ jobs:
       - name: Trivy filesystem scan
         run: |
           docker run --rm -v "$PWD:/wrk" aquasec/trivy:0.54.1 \
-            filesystem --exit-code 0 --no-progress --format table --output /wrk/trivy-fs.txt /wrk
+            filesystem --exit-code 0 --no-progress \
+            --format table --output /wrk/trivy-fs.txt /wrk
       - uses: actions/upload-artifact@v4
         with:
           name: trivy-fs
@@ -30,7 +32,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: tfsec scan
         run: |
-          docker run --rm -v "$PWD/terraform:/src" aquasec/tfsec:latest /src --soft-fail
+          docker run --rm -v "$PWD/terraform:/src" \
+            aquasec/tfsec:latest /src --soft-fail
 
   sbom_syft:
     runs-on: ubuntu-latest
@@ -38,8 +41,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Generate SBOM (Syft)
         run: |
-          docker run --rm \
-            -v "$PWD:/wrk" \
+          docker run --rm -v "$PWD:/wrk" \
             anchore/syft:latest dir:/wrk \
               -o spdx-json=/wrk/sbom.spdx.json
       - uses: actions/upload-artifact@v4
