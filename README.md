@@ -67,38 +67,40 @@ README.md            # This document
 
 ---
 
-🛡️ Security & Compliance
-	•	All scans run in Docker containers, no host dependencies.
-	•	No secrets required — workflows run safely in public without exposing credentials.
-	•	SBOM artifacts are generated and uploaded for transparency.
+## 🛡️ Security & Compliance
+
+- All scans run in **Docker containers**, no host dependencies.  
+- **No secrets required** — workflows run safely in public without exposing credentials.  
+- **SBOM artifacts** are generated and uploaded for transparency.  
 
 ---
 
-💡 Key Practices Demonstrated
-	•	✅ Multi-stage CI/CD with dependencies
-	•	✅ Infrastructure-as-Code validation (Terraform)
-	•	✅ Security scanning with Trivy, tfsec
-	•	✅ SBOM generation (Syft)
-	•	✅ Style compliance with yamllint
-	•	✅ GitHub Actions badges for instant visibility
+## 💡 Key Practices Demonstrated
+
+- ✅ Multi-stage CI/CD with dependencies  
+- ✅ Infrastructure-as-Code validation (Terraform)  
+- ✅ Security scanning with Trivy, tfsec  
+- ✅ SBOM generation (Syft)  
+- ✅ Style compliance with yamllint  
+- ✅ GitHub Actions badges for instant visibility  
 
 ---
 
-📝 Notes
-	•	Terraform
-Uses only null_resource → safe and non-destructive.
-	•	Ansible
-Playbook contains a simple debug message → illustrates CI integration, but does not target real hosts.
-	•	Badges
-Reflect the current status of CI and security scans on the main branch.
+## 📝 Notes
+
+- **Terraform** → Uses only `null_resource` → safe and non-destructive.  
+- **Ansible** → Playbook contains a simple `debug` message → illustrates CI integration, but does not target real hosts.  
+- **Badges** → Reflect the current status of CI and security scans on the `main` branch.  
 
 ---
 
-👀 For Employers
+## 👀 For Employers
 
-This repository is a showcase of my skills as an SRE.
+This repository is a **showcase of my skills as an SRE**.  
 It demonstrates:
-	•	My ability to design and implement structured pipelines
-	•	A strong focus on automation, security, and maintainability
-	•	Hands-on experience across on-prem (homelab) and cloud platforms (Azure, AWS, GCP)
-	•	A professional, transparent way of documenting and presenting technical work
+- My ability to design and implement structured pipelines  
+- A strong focus on **automation, security, and maintainability**  
+- Hands-on experience across **on-prem (homelab)** and **cloud platforms (Azure, AWS, GCP)**  
+- A professional, transparent way of documenting and presenting technical work  
+
+---
