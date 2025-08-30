@@ -9,3 +9,6 @@ Public, sanitized examples of CI/CD pipelines I run in my homelab.
 
 > Secrets are not required here. In real repos, configure secrets
 > like `ANSIBLE_VAULT_PASSWORD` in repository settings.
+
+## CI Status
+![Showcase CI](https://github.com/chadalanlester/showcase/actions/workflows/ci.yml/badge.svg)
