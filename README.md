@@ -55,10 +55,13 @@ The **Security workflow** provides a focused DevSecOps example:
 .github/workflows/
 ├── ci.yml         # Multi-stage CI/CD pipeline
 └── security.yml   # Dedicated security scans
+|
 terraform/
 └── main.tf        # Dummy Terraform configuration (safe null_resource)
+|
 ansible/
 └── site.yml       # Minimal playbook (debug task only)
+|
 .yamllint            # Linting rules (line length, truthy, empty lines)
 README.md            # This document
 
@@ -101,11 +104,3 @@ It demonstrates:
 - A professional, transparent way of documenting and presenting technical work  
 
 ---
-
-
-## CI Status
-![Showcase CI](https://github.com/chadalanlester/showcase/actions/workflows/ci.yml/badge.svg)
-
-## Security Status
-
-[![Security Scans](https://github.com/chadalanlester/showcase/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/chadalanlester/showcase/actions/workflows/security.yml)
