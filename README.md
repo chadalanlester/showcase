@@ -52,16 +52,15 @@ The **Security workflow** provides a focused DevSecOps example:
 ---
 
 ## 📂 Repository Structure
+
+```text
 .github/workflows/
-├── ci.yml         # Multi-stage CI/CD pipeline
-└── security.yml   # Dedicated security scans
-|
+  ├── ci.yml         # Multi-stage CI/CD pipeline
+  └── security.yml   # Dedicated security scans
 terraform/
-└── main.tf        # Dummy Terraform configuration (safe null_resource)
-|
+  └── main.tf        # Dummy Terraform configuration (safe null_resource)
 ansible/
-└── site.yml       # Minimal playbook (debug task only)
-|
+  └── site.yml       # Minimal playbook (debug task only)
 .yamllint            # Linting rules (line length, truthy, empty lines)
 README.md            # This document
 
