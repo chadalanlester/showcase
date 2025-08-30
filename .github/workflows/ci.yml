@@ -1,20 +1,57 @@
 ---
 name: Showcase CI
-
 on:
   workflow_dispatch: {}
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  push: { branches: [ main ] }
+  pull_request: { branches: [ main ] }
 
 jobs:
-  hello:
+  yamllint:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Say hello
-        run: echo "✅ CI pipeline is working in the showcase repo"
+      - uses: actions/checkout@v4
+      - run: |
+          docker run --rm -v "$PWD:/wrk" cytopia/yamllint:latest -s /wrk
+
+  terraform_plan:
+    runs-on: ubuntu-latest
+    needs: [yamllint]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Terraform init + plan
+        working-directory: terraform
+        run: |
+          docker run --rm -v "$PWD":/tf -w /tf hashicorp/terraform:1.7.5 init -input=false
+          docker run --rm -v "$PWD":/tf -w /tf hashicorp/terraform:1.7.5 plan -input=false
+
+  trivy_fs:
+    runs-on: ubuntu-latest
+    needs: [yamllint]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trivy filesystem scan
+        run: |
+          docker run --rm -v "$PWD:/wrk" aquasec/trivy:0.54.1 \
+            filesystem --exit-code 0 --no-progress --format table --output /wrk/trivy-fs.txt /wrk
+      - uses: actions/upload-artifact@v4
+        with: { name: trivy-fs, path: trivy-fs.txt, retention-days: 7 }
+
+  tfsec:
+    runs-on: ubuntu-latest
+    needs: [yamllint]
+    steps:
+      - uses: actions/checkout@v4
+      - name: tfsec scan
+        run: docker run --rm -v "$PWD/terraform:/src" aquasec/tfsec:latest /src --soft-fail
+
+  sbom_syft:
+    runs-on: ubuntu-latest
+    needs: [yamllint]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate SBOM (Syft) for repo
+        run: |
+          docker run --rm -v "$PWD:/wrk" anchore/syft:latest \
+            dir:/wrk -o spdx-json=/wrk/sbom.spdx.json
+      - uses: actions/upload-artifact@v4
+        with: { name: sbom, path: sbom.spdx.json, retention-days: 7 }
