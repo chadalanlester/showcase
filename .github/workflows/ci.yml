@@ -9,4 +9,12 @@ on:
   pull_request:
     branches:
       - main
+
 jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Say hello
+        run: echo "✅ CI pipeline is working in the showcase repo"
