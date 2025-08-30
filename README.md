@@ -1,5 +1,5 @@
 
-```markdown
+
 ## 👋 About Me
 
 I’m **Chad Lester**, a **Site Reliability Engineer (SRE)**.  
