@@ -86,6 +86,24 @@ README.md            # This document
 
 ---
 
+## 🧰 Technologies × Workflows
+
+| Technology / Tool | Showcase CI | Security Scans |
+|-------------------|-------------|----------------|
+| **YAML Lint (yamllint)** | ✅ | ❌ |
+| **Terraform (init/plan)** | ✅ | ✅ (scanned with tfsec) |
+| **Ansible** | Demo playbook included | ❌ |
+| **Trivy** | ✅ (filesystem scan) | ✅ (filesystem scan) |
+| **tfsec** | ✅ | ✅ |
+| **Syft (SBOM)** | ✅ | ✅ |
+| **Docker** | ✅ (all jobs run via Docker images) | ✅ |
+| **GitHub Actions** | ✅ | ✅ |
+
+✅ = tool is actively used in that workflow  
+❌ = not applicable  
+
+---
+
 ## 📝 Notes
 
 - **Terraform** → Uses only `null_resource` → safe and non-destructive.  
