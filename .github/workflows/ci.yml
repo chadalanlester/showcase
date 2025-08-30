@@ -1,0 +1,19 @@
+name: Showcase CI
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  yaml_lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker run --rm -v "$PWD:/wrk" cytopia/yamllint:latest -s /wrk
+
+  terraform_plan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Terraform init + plan
+        working-directory: terraform
+        run: |
+          docker run --rm -v "$PWD":/tf -w /tf hashicorp/terraform:1.7.5 init -input=false
+          docker run --rm -v "$PWD":/tf -w /tf hashicorp/terraform:1.7.5 plan -input=false
