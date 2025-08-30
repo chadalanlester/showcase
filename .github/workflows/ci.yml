@@ -50,5 +50,3 @@ jobs:
             terraform fmt -check
             terraform validate || true
             popd >/dev/null
-          done
-
