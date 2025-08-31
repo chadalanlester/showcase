@@ -15,12 +15,6 @@ spec:
     spec:
       containers:
         - name: hello
-          image: ghcr.io/google-samples/hello-app:1.0
+          image: nginxdemos/hello:plain-text
           ports:
-            - containerPort: 8080
-          readinessProbe:
-            httpGet: { path: "/", port: 8080 }
-            initialDelaySeconds: 5
-          livenessProbe:
-            httpGet: { path: "/", port: 8080 }
-            initialDelaySeconds: 10
+            - containerPort: 80
