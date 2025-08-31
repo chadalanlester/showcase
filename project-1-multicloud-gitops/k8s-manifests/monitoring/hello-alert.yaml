@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: hello-alerts
+  namespace: monitoring
+spec:
+  groups:
+  - name: hello.rules
+    rules:
+    - alert: HelloDown
+      expr: kube_deployment_status_replicas_available{namespace="demo",deployment="hello"} < 1
+      for: 2m
+      labels: { severity: warning }
+      annotations:
+        summary: "hello deployment has no available replicas"
+        description: "Available replicas dropped to 0 in demo/hello."
