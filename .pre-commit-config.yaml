@@ -1,0 +1,18 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: detect-private-key
+      - id: detect-aws-credentials
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+      - id: check-yaml
+      - id: check-json
+
+  - repo: local
+    hooks:
+      - id: forbid-adminpassword
+        name: "Block adminPassword in YAML"
+        language: pygrep
+        entry: 'adminPassword\s*:'
+        files: '\.(ya?ml)$'
