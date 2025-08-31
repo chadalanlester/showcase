@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello
+  namespace: demo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+        - name: hello
+          image: ghcr.io/google-samples/hello-app:1.0
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet: { path: "/", port: 8080 }
+            initialDelaySeconds: 5
+          livenessProbe:
+            httpGet: { path: "/", port: 8080 }
+            initialDelaySeconds: 10
