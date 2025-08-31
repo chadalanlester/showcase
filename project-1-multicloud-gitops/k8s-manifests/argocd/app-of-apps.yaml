@@ -8,15 +8,10 @@ spec:
   source:
     repoURL: https://github.com/chadalanlester/showcase.git
     targetRevision: main
-    path: project-1-multicloud-gitops/k8s-manifests
-    directory:
-      recurse: true
+    path: project-1-multicloud-gitops/k8s-manifests/app
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
   syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+    automated: { prune: true, selfHeal: true }
+    syncOptions: [ CreateNamespace=true ]
