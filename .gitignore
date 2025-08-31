@@ -1,0 +1,13 @@
+.terraform/
+*.tfstate*
+*.tfvars
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.env
+kubeconfig*
+*.pem
+*.key
+*.crt
+id_rsa*
+id_ed25519*
