@@ -15,8 +15,9 @@ spec:
     helm:
       values: |
         grafana:
-          adminPassword: admin
-          service:
+  admin:
+    existingSecret: grafana-admin
+  service:
             type: LoadBalancer
   syncPolicy:
     automated: { prune: true, selfHeal: true }
