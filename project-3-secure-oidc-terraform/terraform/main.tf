@@ -1,18 +1,28 @@
 resource "aws_s3_bucket" "secure" {
-  bucket = var.bucket_name
-
+  bucket        = var.bucket_name
   force_destroy = false
-  tags = { Project = "sre-showcase", Component = "project-3" }
+
+  tags = {
+    Project   = "sre-showcase"
+    Component = "project-3"
+  }
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "sse" {
-  bucket = aws_s3_bucket_secure_id
-  rule { apply_server_side_encryption_by_default { sse_algorithm = "AES256" } }
+  bucket = aws_s3_bucket.secure.id
+
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
+  }
 }
 
 resource "aws_s3_bucket_versioning" "v" {
   bucket = aws_s3_bucket.secure.id
-  versioning_configuration { status = "Enabled" }
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 resource "aws_s3_bucket_public_access_block" "pab" {
