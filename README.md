@@ -144,7 +144,7 @@ It is structured as a series of projects that build on one another.
 
 ## 🏗️ Project 2: Case Platform (Vendor-Scrubbed)
 
-**Goal:** Adapt a previous Filevine technical exercise into a neutral,
+**Goal:** Adapt a previous interview technical exercise into a neutral,
 publishable SRE project.
 
 ### Key Features
