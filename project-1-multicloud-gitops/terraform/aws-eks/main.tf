@@ -65,7 +65,12 @@ resource "aws_iam_role_policy_attachment" "eks" {
 resource "aws_eks_cluster" "this" {
   name     = var.cluster_name
   role_arn = aws_iam_role.eks.arn
-  version  = "1.29"
+  version  = "1.30"
+
+  access_config {
+    authentication_mode                         = "API_AND_CONFIG_MAP"
+    bootstrap_cluster_creator_admin_permissions = true
+  }
 
   vpc_config {
     subnet_ids = [
@@ -75,6 +80,29 @@ resource "aws_eks_cluster" "this" {
   }
 
   tags = local.tags
+}
+
+# --- EKS access entry for your SSO role ---
+variable "principal_arn" {
+  type = string
+  # example:
+  # default = "arn:aws:iam::887859330293:role/aws-reserved/sso.amazonaws.com/AWSReservedSSO_AdministratorAccess_77ba575cef335dac"
+}
+
+resource "aws_eks_access_entry" "admin_sso" {
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = var.principal_arn
+  type          = "STANDARD"
+}
+
+resource "aws_eks_access_policy_association" "admin" {
+  cluster_name  = aws_eks_cluster.this.name
+  principal_arn = var.principal_arn
+  policy_arn    = "arn:aws:eks::aws:cluster-access-policy/AmazonEKSClusterAdminPolicy"
+
+  access_scope {
+    type = "cluster"
+  }
 }
 
 resource "aws_iam_role" "node" {
