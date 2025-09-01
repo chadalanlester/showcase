@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: resilient-trivia
+  namespace: argocd
+spec:
+  project: resilient
+  source:
+    repoURL: https://github.com/chadalanlester/showcase.git
+    targetRevision: main
+    path: project-4-resilient-app/k8s/base
+    directory: { recurse: true }
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: resilient
+  syncPolicy:
+    automated: { prune: true, selfHeal: true }
+    syncOptions: [ "CreateNamespace=true" ]
