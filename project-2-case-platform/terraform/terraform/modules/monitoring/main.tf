@@ -31,7 +31,7 @@ resource "aws_instance" "monitoring" {
                 - job_name: 'node'
                   static_configs:
                   - targets: ["${var.nginx_private_ip}:9100"]
-              EOT 
+              EOT
 
               chown -R prometheus:prometheus /etc/prometheus /var/lib/prometheus
 

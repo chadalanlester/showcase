@@ -57,6 +57,3 @@ module "monitoring" {
   security_group_id  = module.security_group.id
   nginx_private_ip   = module.ec2.private_ip
 }
-
-
-
