@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: trivia-api
-        image: ghcr.io/OWNER/showcase/project-4-resilient-app:latest
+        image: ghcr.io/chadalanlester/showcase/project-4-resilient-app:latest
         ports:
         - name: http
           containerPort: 8080

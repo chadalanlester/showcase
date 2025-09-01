@@ -1,37 +1,20 @@
 #!/usr/bin/env python3
-import random
-import subprocess
-import sys
+import subprocess, sys, random
 
-def get_pods(namespace="demo"):
-    """Return a list of pod names in the given namespace."""
-    try:
-        result = subprocess.check_output(
-            ["kubectl", "get", "pods", "-n", namespace, "-o", "name"],
-            text=True
-        )
-        return [line.strip().split("/")[-1] for line in result.splitlines() if line.strip()]
-    except subprocess.CalledProcessError as e:
-        print(f"Error fetching pods: {e}", file=sys.stderr)
-        return []
+ns  = sys.argv[1] if len(sys.argv) > 1 else "resilient"
+app = sys.argv[2] if len(sys.argv) > 2 else "trivia-api"
 
-def delete_pod(pod, namespace="demo"):
-    """Delete a specific pod."""
-    try:
-        subprocess.check_call(
-            ["kubectl", "delete", "pod", pod, "-n", namespace, "--grace-period=0", "--force"]
-        )
-        print(f"Deleted pod: {pod}")
-    except subprocess.CalledProcessError as e:
-        print(f"Error deleting pod {pod}: {e}", file=sys.stderr)
+def sh(*args):
+    return subprocess.check_output(args, text=True).strip()
 
-def main():
-    pods = get_pods()
-    if not pods:
-        print("No pods found in demo namespace.")
-        return
-    pod = random.choice(pods)
-    delete_pod(pod)
+try:
+    pods = sh("kubectl","-n",ns,"get","pods","-l",f"app={app}","-o","name").splitlines()
+except subprocess.CalledProcessError as e:
+    print(f"kubectl error: {e}"); sys.exit(1)
 
-if __name__ == "__main__":
-    main()
+if not pods:
+    print(f"No pods found in {ns} namespace for app={app}."); sys.exit(1)
+
+victim = random.choice(pods).split("/",1)[1]
+subprocess.check_call(["kubectl","-n",ns,"delete","pod",victim,"--grace-period=0","--force"])
+print(f"Killed pod: {victim} in ns={ns}")
