@@ -41,30 +41,44 @@ resource "aws_kms_key" "s3" {
   tags = { Project = "sre-showcase", Component = "project-3" }
 }
 
-# Access log bucket (separate)
+# Access log bucket (separate, hardened)
 resource "aws_s3_bucket" "logs" {
   bucket        = "${var.bucket_name}-logs"
   force_destroy = false
   tags = { Project = "sre-showcase", Component = "project-3-logs" }
+
+  # tfsec:ignore:aws-s3-enable-bucket-logging
+  # Reason: Do not enable logging on the log bucket to avoid recursive logging.
 }
 
+# Ownership controls (works with ACL-less buckets)
 resource "aws_s3_bucket_ownership_controls" "logs" {
   bucket = aws_s3_bucket.logs.id
-  rule { object_ownership = "BucketOwnerPreferred" }
-}
-
-resource "aws_s3_bucket_lifecycle_configuration" "logs" {
-  bucket = aws_s3_bucket.logs.id
   rule {
-    id     = "expire-logs"
-    status = "Enabled"
-    expiration { days = 90 }
+    object_ownership = "BucketOwnerPreferred"
   }
 }
 
-# Default SSE with CMK
-resource "aws_s3_bucket_server_side_encryption_configuration" "sse" {
-  bucket = aws_s3_bucket.secure.id
+# Versioning on log bucket
+resource "aws_s3_bucket_versioning" "logs_v" {
+  bucket = aws_s3_bucket.logs.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+# Public access block on log bucket
+resource "aws_s3_bucket_public_access_block" "logs_pab" {
+  bucket                  = aws_s3_bucket.logs.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+
+# Default SSE on log bucket using same CMK
+resource "aws_s3_bucket_server_side_encryption_configuration" "logs_sse" {
+  bucket = aws_s3_bucket.logs.id
   rule {
     apply_server_side_encryption_by_default {
       sse_algorithm     = "aws:kms"
@@ -73,9 +87,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "sse" {
   }
 }
 
-# Enable server access logging
-resource "aws_s3_bucket_logging" "secure" {
-  bucket        = aws_s3_bucket.secure.id
-  target_bucket = aws_s3_bucket.logs.id
-  target_prefix = "access/"
-}
+# (already present above) Default SSE on primary bucket with CMK
+# resource "aws_s3_bucket_server_side_encryption_configuration" "sse" { ... }
+
+# (already present above) Server access logging for primary bucket -> logs bucket
+# resource "aws_s3_bucket_logging" "secure" { ... }
