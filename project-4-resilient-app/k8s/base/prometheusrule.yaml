@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: trivia-api-rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: trivia-api.rules
+    rules:
+    - alert: TriviaAPIDown
+      expr: kube_deployment_status_replicas_available{namespace="resilient",deployment="trivia-api"} < 1
+      for: 2m
+      labels: { severity: warning }
+      annotations:
+        summary: "Trivia API has no replicas running"
+        description: "Deployment trivia-api is unavailable in namespace resilient."
