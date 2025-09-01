@@ -1,0 +1,25 @@
+name: TF Apply (Project 3)
+on:
+  workflow_dispatch: {}
+  push:
+    branches: [ main ]
+    paths: [ "project-3-secure-oidc-terraform/**" ]
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  apply:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: project-3-secure-oidc-terraform/terraform } }
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure AWS via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.PROJ3_OIDC_ROLE_ARN }}
+          aws-region: us-west-1
+      - name: Terraform Init
+        run: terraform init
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -var "bucket_name=${{ secrets.PROJ3_BUCKET_NAME }}"
