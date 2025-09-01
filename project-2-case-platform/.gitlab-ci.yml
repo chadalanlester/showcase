@@ -28,4 +28,3 @@ plan:
     - terraform init
     - terraform plan -lock=false
   when: manual
-

@@ -36,4 +36,3 @@ make init     # Initialize providers and modules
 make apply    # Deploy infra and run cloud-init
 make destroy  # Tear everything down
 make output   # Get public IPs
-
