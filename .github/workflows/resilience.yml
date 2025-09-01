@@ -1,4 +1,3 @@
-# .github/workflows/resilience.yml
 name: Resilience Checks
 
 on:
@@ -50,26 +49,49 @@ jobs:
       - name: Install script deps
         run: pip install -r $APP_PATH/scripts/requirements.txt
 
-      # ---- Optional: restore kubeconfig to run chaos (requires KUBECONFIG_B64) ----
+      # ---- Restore kubeconfig only if provided ----
       - name: Restore kubeconfig (optional)
-        if: ${{ secrets.KUBECONFIG_B64 != '' }}
+        env:
+          KUBECONFIG_B64: ${{ secrets.KUBECONFIG_B64 }}
         run: |
-          mkdir -p $HOME/.kube
-          echo "${{ secrets.KUBECONFIG_B64 }}" | base64 -d > $HOME/.kube/config
-          echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
+          if [ -n "${KUBECONFIG_B64}" ]; then
+            mkdir -p "$HOME/.kube"
+            echo "${KUBECONFIG_B64}" | base64 -d > "$HOME/.kube/config"
+            echo "KUBECONFIG=$HOME/.kube/config" >> "$GITHUB_ENV"
+            echo "kubeconfig restored"
+          else
+            echo "KUBECONFIG_B64 not set; skipping chaos step."
+          fi
 
+      # ---- Chaos kill only if kubeconfig exists ----
       - name: Chaos kill one pod (optional)
-        if: ${{ env.KUBECONFIG != '' }}
-        run: python $APP_PATH/scripts/chaos_kill_pods.py resilient trivia-api
+        run: |
+          if [ -f "$HOME/.kube/config" ]; then
+            python $APP_PATH/scripts/chaos_kill_pods.py resilient trivia-api
+          else
+            echo "No kubeconfig; skipping chaos."
+          fi
 
       # ---- Load gen against your LB URL (TRIVIA_URL secret) ----
       - name: Load for 2 minutes
         env:
           CLIENTS: '120'
           DURATION: '120'
-        run: python $APP_PATH/scripts/load_gen.py "${{ secrets.TRIVIA_URL }}/trivia"
+          TRIVIA_URL: ${{ secrets.TRIVIA_URL }}
+        run: |
+          if [ -n "${TRIVIA_URL}" ]; then
+            python $APP_PATH/scripts/load_gen.py "${TRIVIA_URL}/trivia"
+          else
+            echo "TRIVIA_URL not set; skipping load."
+          fi
 
       # ---- Optional SLO check (PROM_URL secret) ----
       - name: Check SLO
-        if: ${{ secrets.PROM_URL != '' }}
-        run: python $APP_PATH/scripts/check_slo.py "${{ secrets.PROM_URL }}"
+        env:
+          PROM_URL: ${{ secrets.PROM_URL }}
+        run: |
+          if [ -n "${PROM_URL}" ]; then
+            python $APP_PATH/scripts/check_slo.py "${PROM_URL}"
+          else
+            echo "PROM_URL not set; skipping SLO check."
+          fi
