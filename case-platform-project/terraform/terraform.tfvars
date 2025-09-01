@@ -1,0 +1,7 @@
+ami_id           = "ami-02de260c9d93d7b98"
+instance_type    = "t2.micro"
+key_name         = "acme-key"
+name             = "acme-instance"
+subnet_id        = "subnet-xxxxxx"
+security_group_id = "sg-xxxxxx"
+nginx_private_ip  = "172.31.0.100"
