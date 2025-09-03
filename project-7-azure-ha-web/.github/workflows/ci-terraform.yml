@@ -1,17 +1,14 @@
 name: CI - Terraform Project7
-
 on:
   push:
     branches: [ "main" ]
     paths:
-      - "projects/07-azure-ha-web/terraform/**"
+      - "07-azure-ha-web/terraform/**"
       - ".github/workflows/ci-terraform.yml"
   workflow_dispatch:
-
 permissions:
   contents: read
   id-token: write
-
 jobs:
   terraform:
     runs-on: ubuntu-latest
@@ -20,7 +17,7 @@ jobs:
       TF_IN_AUTOMATION: true
     defaults:
       run:
-        working-directory: projects/07-azure-ha-web/terraform
+        working-directory: 07-azure-ha-web/terraform
     steps:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
@@ -45,12 +42,12 @@ jobs:
       - run: |
           python3 -m pip install --upgrade pip
           python3 -m pip install ansible-core azure-identity azure-mgmt-compute
-          ansible-galaxy collection install -r projects/07-azure-ha-web/ansible/collections/requirements.yml
+          ansible-galaxy collection install -r 07-azure-ha-web/ansible/collections/requirements.yml
       - uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
       - run: |
-          cd projects/07-azure-ha-web/ansible
+          cd 07-azure-ha-web/ansible
           ansible-playbook playbooks/site.yml -e "content_version=${{ github.run_number }}"
