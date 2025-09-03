@@ -1,0 +1,56 @@
+name: CI - Terraform Project7
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - "projects/07-azure-ha-web/terraform/**"
+      - ".github/workflows/ci-terraform.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    env:
+      ARM_USE_OIDC: true
+      TF_IN_AUTOMATION: true
+    defaults:
+      run:
+        working-directory: projects/07-azure-ha-web/terraform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - run: terraform init -backend-config=backend.hcl
+      - run: terraform fmt -check -recursive
+      - run: terraform validate
+      - run: terraform plan -out plan.tfplan
+      - if: github.ref == 'refs/heads/main'
+        run: terraform apply -auto-approve plan.tfplan
+
+  ansible-update:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    needs: terraform
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install ansible-core azure-identity azure-mgmt-compute
+          ansible-galaxy collection install -r projects/07-azure-ha-web/ansible/collections/requirements.yml
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - run: |
+          cd projects/07-azure-ha-web/ansible
+          ansible-playbook playbooks/site.yml -e "content_version=${{ github.run_number }}"
