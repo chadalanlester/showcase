@@ -42,18 +42,20 @@ resource "azurerm_container_registry" "acr" {
 }
 
 resource "azurerm_key_vault" "kv" {
-  name                        = replace("${var.name_prefix}-kv", "-", "")
-  resource_group_name         = azurerm_resource_group.rg.name
-  location                    = var.location
-  tenant_id                   = data.azurerm_client_config.current.tenant_id
-  sku_name                    = "standard"
-  enable_rbac_authorization   = true
-  soft_delete_retention_days  = 7
-  purge_protection_enabled    = true
+  name                       = replace("${var.name_prefix}-kv", "-", "")
+  resource_group_name        = azurerm_resource_group.rg.name
+  location                   = var.location
+  tenant_id                  = data.azurerm_client_config.current.tenant_id
+  sku_name                   = "standard"
+  enable_rbac_authorization  = true
+  soft_delete_retention_days = 7
+  purge_protection_enabled   = true
+
   network_acls {
     default_action = "Allow"
     bypass         = "AzureServices"
   }
+
   tags = var.tags
 }
 
@@ -63,8 +65,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = "${var.name_prefix}-dns"
 
-  kubernetes_version         = var.kubernetes_version
-  automatic_channel_upgrade  = "stable"
+  kubernetes_version        = var.kubernetes_version
+  automatic_channel_upgrade = "stable"
 
   identity {
     type = "SystemAssigned"
@@ -93,8 +95,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   azure_active_directory_role_based_access_control {
-    managed                  = true
-    admin_group_object_ids   = []
+    managed                = true
+    admin_group_object_ids = []
   }
 
   addon_profile {
@@ -169,18 +171,19 @@ resource "azurerm_monitor_diagnostic_setting" "aksdiag" {
       }
     }
   }
+
   lifecycle {
-    ignore_changes = [log] # categories evolve; keep plan stable
+    ignore_changes = [log]
   }
 }
 
 resource "azurerm_kubernetes_cluster_extension" "flux" {
-  name                         = "flux"
-  cluster_id                   = azurerm_kubernetes_cluster.aks.id
-  extension_type               = "flux"
-  release_train                = "Stable"
-  auto_upgrade_minor_version   = true
-  tags                         = var.tags
+  name                       = "flux"
+  cluster_id                 = azurerm_kubernetes_cluster.aks.id
+  extension_type             = "flux"
+  release_train              = "Stable"
+  auto_upgrade_minor_version = true
+  tags                       = var.tags
 }
 
 resource "azurerm_kubernetes_flux_configuration" "gitops" {
@@ -216,6 +219,7 @@ resource "azurerm_policy_assignment" "aks_initiative" {
   scope                = azurerm_kubernetes_cluster.aks.id
   policy_definition_id = var.policy_set_definition_id
   enforcement_mode     = "Default"
+
   identity {
     type = "SystemAssigned"
   }
