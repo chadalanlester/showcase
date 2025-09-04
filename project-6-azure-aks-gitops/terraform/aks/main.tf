@@ -78,7 +78,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     node_count                   = 1
     only_critical_addons_enabled = true
     orchestrator_version         = var.kubernetes_version
-    upgrade_settings { max_surge = "33%" }
+    upgrade_settings { max_surge = "0" }
   }
 
   network_profile {
