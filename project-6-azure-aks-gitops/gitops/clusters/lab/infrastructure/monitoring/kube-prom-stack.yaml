@@ -1,0 +1,31 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+  namespace: monitoring
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      version: ">=61.0.0"
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: flux-system
+  install:
+    createNamespace: false
+    remediation: { retries: 3 }
+  upgrade:
+    remediation: { retries: 3 }
+  values:
+    grafana:
+      enabled: true
+      service:
+        type: LoadBalancer
+    alertmanager:
+      enabled: true
+    prometheus:
+      prometheusSpec:
+        retention: 15d
+        scrapeInterval: 30s
