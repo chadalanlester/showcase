@@ -94,3 +94,16 @@ resource "azurerm_kubernetes_cluster_node_pool" "work" {
   max_pods              = 60
   tags                  = var.tags
 }
+
+resource "azurerm_kubernetes_cluster_node_pool" "work" {
+  name                  = "work"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
+  vm_size               = "Standard_B2ms"
+  node_count            = 1
+  mode                  = "User"
+  enable_auto_scaling   = false
+  os_type               = "Linux"
+  orchestrator_version  = var.kubernetes_version
+  max_pods              = 60
+  tags                  = var.tags
+}
