@@ -1,5 +1,3 @@
-
-
 ## 👋 About Me
 
 I’m **Chad Lester**, a **Site Reliability Engineer (SRE)**.
@@ -12,11 +10,9 @@ I maintain a full homelab environment where I build and test modern infrastructu
 - 📦 **Docker**, **Terraform**, and **Ansible** for automation and provisioning
 - 📊 **Prometheus**, **Grafana**, **Alertmanager** for monitoring and alerting
 
-I also work with **public cloud providers** — **Azure**, **AWS**, and **Google Cloud** — and will be adding showcase workflows and IaC examples for these platforms.
+I also work with **public cloud providers** — **Azure**, **AWS**, and **Google Cloud** — and showcase workflows and IaC examples for these platforms.
 
 This repository is meant for **employers** to review my skills in action: demonstrating clarity, automation, and security-first design.
-
----
 
 # Showcase Workflows
 
@@ -74,16 +70,16 @@ The **Security workflow** provides a focused DevSecOps example:
 
 ## 🧰 Technologies × Workflows
 
-| Technology / Tool | Showcase CI | Security Scans |
-|-------------------|-------------|----------------|
-| **YAML Lint (yamllint)** | ✅ | ❌ |
-| **Terraform (init/plan)** | ✅ | ✅ (scanned with tfsec) |
-| **Ansible** | Demo playbook included | ❌ |
-| **Trivy** | ✅ (filesystem scan) | ✅ (filesystem scan) |
-| **tfsec** | ✅ | ✅ |
-| **Syft (SBOM)** | ✅ | ✅ |
-| **Docker** | ✅ (all jobs run via Docker images) | ✅ |
-| **GitHub Actions** | ✅ | ✅ |
+| Technology / Tool          | Showcase CI | Security Scans |
+|-----------------------------|-------------|----------------|
+| **YAML Lint (yamllint)**   | ✅ | ❌ |
+| **Terraform (init/plan)**  | ✅ | ✅ (scanned with tfsec) |
+| **Ansible**                | Demo playbook included | ❌ |
+| **Trivy**                  | ✅ (filesystem scan) | ✅ (filesystem scan) |
+| **tfsec**                  | ✅ | ✅ |
+| **Syft (SBOM)**            | ✅ | ✅ |
+| **Docker**                 | ✅ (all jobs run via Docker images) | ✅ |
+| **GitHub Actions**         | ✅ | ✅ |
 
 ✅ = tool is actively used in that workflow
 ❌ = not applicable
@@ -102,149 +98,224 @@ The **Security workflow** provides a focused DevSecOps example:
 
 This repository is a **showcase of my skills as an SRE**.
 It demonstrates:
+
 - My ability to design and implement structured pipelines
 - A strong focus on **automation, security, and maintainability**
 - Hands-on experience across **on-prem (homelab)** and **cloud platforms (Azure, AWS, GCP)**
+- **Kubernetes expertise**: GitOps with Argo CD, Helm, Prometheus/Grafana monitoring, RBAC governance
+- Clear **coding and documentation standards**: consistent style, linting, evidence-driven workflows
 - A professional, transparent way of documenting and presenting technical work
 
 ---
 
 # 🚀 SRE Showcase – Multi-Cloud & Resilience Projects
 
-This repository demonstrates **Site Reliability Engineering (SRE)** practices across multiple clouds (AWS EKS, GCP GKE), GitOps (Argo CD), observability (Prometheus & Grafana), and resilience testing (chaos engineering).
+This repository demonstrates **Site Reliability Engineering (SRE)** practices across multiple clouds (AWS, Azure, GCP), GitOps (Argo CD, FluxCD), observability (Prometheus & Grafana), security controls, and resilience testing.
 
-It is structured as a series of projects that build on one another.
+Each project is structured with:
+- 📂 Infrastructure-as-Code (Terraform, Ansible, Helm)
+- 🔐 Security & compliance scans (tfsec, Trivy, RBAC policies)
+- 📊 Monitoring & evidence capture
+- 📜 Documentation & GitOps-style workflows
 
 ---
 
 ## 🌍 Project 1: Multi-Cloud GitOps with Argo CD
 
-**Goal:** Deploy and manage workloads on **both AWS EKS and GCP GKE** clusters using **Argo CD GitOps**.
+**Goal:** Deploy and manage workloads on **AWS EKS** and **GCP GKE** clusters using Argo CD GitOps.
 
-### Key Features
+**Key Features**
 - Terraform to provision:
   - AWS EKS in `us-west-1`
   - GCP GKE in `us-central1-a`
-- Argo CD installed in each cluster
-- App-of-Apps pattern for GitOps sync
+- Argo CD App-of-Apps pattern for GitOps sync
 - Monitoring stack: Prometheus, Grafana, Alertmanager
-- Evidence of successful deployments in [docs/](./docs)
 
-### Evidence
-- ✅ EKS and GKE both run the **Hello Demo app** via Argo CD
+**Evidence**
+- ✅ Hello app deployed to both EKS and GKE
 - ✅ Grafana exposed via LoadBalancer
-- ✅ Prometheus CRDs installed and scraping targets
+- ✅ Prometheus CRDs installed
 
-📄 See detailed Terraform + Argo manifests in:
-- [`project-1-multicloud-gitops/terraform/aws-eks`](./project-1-multicloud-gitops/terraform/aws-eks)
-- [`project-1-multicloud-gitops/terraform/gcp-gke`](./project-1-multicloud-gitops/terraform/gcp-gke)
-- [`project-1-multicloud-gitops/k8s-manifests`](./project-1-multicloud-gitops/k8s-manifests)
+📄 See: [`project-1-multicloud-gitops`](./project-1-multicloud-gitops)
 
 ---
 
 ## 🏗️ Project 2: Case Platform (Vendor-Scrubbed)
 
-**Goal:** Adapt a previous interview technical exercise into a neutral,
-publishable SRE project.
+**Goal:** Adapt a previous interview technical exercise into a neutral, public-safe SRE project.
 
-### Key Features
-- Terraform IaC for AWS VPC, EC2, Security Groups
-- Monitoring setup with CloudWatch and alerts
-- Scripts to bootstrap demo app on EC2
-- Sanitized of vendor-specific references (`filevine` → `acme`)
+**Key Features**
+- AWS VPC + EC2 with Terraform
+- Security groups + monitoring
+- CloudWatch alarms
+- Cleaned of vendor references
 
-### Evidence
-- ✅ EC2 instance with monitoring and security groups
-- ✅ Clean public GitHub repo with history rewritten via `git-filter-repo`
+**Evidence**
+- ✅ EC2 bootstrapped with demo app
+- ✅ Security groups + CloudWatch monitoring
 
-📄 See full project here:
-[`case-platform-project`](./case-platform-project)
+📄 See: [`project-2-case-platform`](./project-2-case-platform)
 
 ---
 
 ## 🌐 Project 3: Multi-Cloud GitOps (EKS + GKE)
 
-**Goal:** Deploy workloads consistently across **AWS EKS** and **GCP GKE**
-using **Argo CD** + **Terraform**.
+**Goal:** Deploy workloads consistently across AWS EKS and GCP GKE using Argo CD.
 
-### Key Features
-- Terraform IaC for:
-  - AWS EKS cluster
-  - GCP GKE cluster
+**Key Features**
+- IaC for AWS + GCP clusters
 - Argo CD App-of-Apps pattern
 - Monitoring stack (Prometheus + Grafana)
-- Documentation of kubeconfig switching with helper script
+- Scripts for kubeconfig switching
 
-### Evidence
-- ✅ EKS and GKE clusters provisioned
-- ✅ Demo `hello` app deployed via Argo CD
-- ✅ Monitoring dashboards accessible on both clouds
+**Evidence**
+- ✅ Hello demo app running in both clouds
+- ✅ Observability dashboards up
 
-📄 See full project here:
-[`project-1-multicloud-gitops`](./project-1-multicloud-gitops)
+📄 See: [`project-1-multicloud-gitops`](./project-1-multicloud-gitops)
 
 ---
 
 ## 🛡️ Project 4: Resilient Web Application with Self-Healing
 
-**Goal:** Showcase Kubernetes self-healing, autoscaling, chaos testing, and
-resilience validation using a fun **Flask Trivia API**.
+**Goal:** Showcase Kubernetes **self-healing, autoscaling, and chaos testing** with a Flask trivia API.
 
-### Key Features
-- **Flask app** serving random DevOps trivia
-- **Kubernetes Deployment** with:
-  - Liveness + Readiness probes
-  - PodDisruptionBudget (PDB)
-  - HorizontalPodAutoscaler (HPA)
-- **Argo CD GitOps** for automated sync
-- **Chaos Engineering** with Python scripts:
-  - `chaos_kill_pods.py` → randomly deletes pods
-  - `load_gen.py` → synthetic load to trigger HPA
-  - `remediate_restart.py` → auto rollout restart if replicas too low
-  - `check_slo.py` → check Prometheus SLO compliance
-- **GitHub Actions** workflow `resilience.yml` runs:
-  - Build + push container to GHCR
-  - Chaos test + load gen
-  - Optional SLO validation
+**Key Features**
+- Kubernetes Deployment with readiness/liveness probes
+- HPA, PDBs, autoscaling
+- Chaos testing scripts (kill pods, load gen, restart remediation)
+- Prometheus SLO validation
 
-### Evidence
-- ✅ Pods recover after chaos kills
-- ✅ HPA scales out under load
-- ✅ Prometheus metrics integrated
-- ✅ GitHub Actions pipeline executes resilience tests
+**Evidence**
+- ✅ Pods recover after chaos tests
+- ✅ Autoscaling under load
+- ✅ Prometheus metrics validated
 
-📄 See full project here:
-[`project-4-resilient-app`](./project-4-resilient-app)
+📄 See: [`project-4-resilient-app`](./project-4-resilient-app)
 
 ---
 
-## 🧹 Cleanup & Cost Control
+## 📦 Project 5: Placeholder (to be added)
 
-Because these projects use **AWS Free Tier** and **GCP trial credits**, all
-resources should be torn down after testing to avoid unnecessary charges.
+> Reserved for next project — likely focused on **CI/CD pipelines** or **container security**.
 
-### Teardown Steps
+---
 
-1. **Delete demo namespaces** (removes apps, services, ELBs, HPAs, PDBs):
-   ```bash
-   kubectl delete ns demo resilient monitoring --wait=true
+## ☸️ Project 6: Azure AKS GitOps with Prometheus & Grafana
 
-2. **Destroy Argo CD** (optional if not reused):
-   ```bash
-   helm uninstall argocd -n argocd
-   kubectl delete ns argocd --wait=true
+**Goal:** Deploy a secure, cost-controlled AKS cluster with GitOps, monitoring, and RBAC governance.
 
-3. **Tear down AWS EKS**
-   ```bash
-   cd project-1-multicloud-gitops/terraform/aws-eks
-   export AWS_PROFILE=AdministratorAccess-<account_id>
-   terraform destroy -auto-approve \
-     -var region=us-west-1 \
-     -var principal_arn=$PRINCIPAL_ARN
+**Key Features**
+- Terraform for AKS + ACR + Key Vault
+- FluxCD GitOps with HelmRelease manifests
+- Prometheus & Grafana via kube-prometheus-stack
+- Evidence folder with captured resources
 
-4. **Tear down GKE**
-   ```bash
-   cd project-1-multicloud-gitops/terraform/gcp-gke
-   terraform destroy -auto-approve \
-     -var "project=chad-homelab" \
-     -var "region=us-central1-a"
+**Evidence**
+- ✅ `nodes.txt`, `monitoring-pods.txt`, `monitoring-svc.txt` in [`project-6-azure-aks-gitops/evidence`](./project-6-azure-aks-gitops/evidence)
+
+📄 See: [`project-6-azure-aks-gitops`](./project-6-azure-aks-gitops)
+
+---
+
+## ☸️ Project 6: Azure AKS GitOps
+
+**Goal:** Deploy a production-style **AKS (Azure Kubernetes Service)** cluster with **GitOps**, observability, and secure supply chain integrations — while staying within free-tier limits.
+
+### Key Features
+- Terraform + GitHub Actions deploy AKS with:
+  - System pool (B2ms) and workload pool (B2ms)
+  - Azure RBAC enabled with minimal cluster role bindings
+  - ACR integration (`AcrPull` role assignment)
+  - Key Vault CSI driver integration (future-ready)
+- Monitoring stack via Helm:
+  - Prometheus, Alertmanager, Grafana exposed via LoadBalancer
+  - Default-deny NetworkPolicy
+- Evidence captured under `project-6-azure-aks-gitops/evidence/`
+
+### Evidence
+- `project-6-azure-aks-gitops/evidence/*/nodes.txt`
+- `project-6-azure-aks-gitops/evidence/*/monitoring-pods.txt`
+- `project-6-azure-aks-gitops/evidence/*/monitoring-svc.txt`
+
+### SRE Mapping
+- **GitOps & Change Control:** Terraform plans in CI; Helm releases recorded
+- **Observability:** Prometheus + Grafana + Alertmanager; LB dashboards
+- **Secure Supply Chain:** ACR AcrPull, OIDC auth, KV CSI-ready
+- **RBAC & Governance:** Azure RBAC + minimal in-cluster binding; Policy add-on
+- **Folder:** `project-6-azure-aks-gitops`
+
+---
+
+## 🏛️ Project 7: Azure HA Web on Hub-Spoke + VMSS
+
+**Goal:** Build a **high-availability web service** in Azure using **Hub-Spoke networking** and **VM Scale Sets**.
+
+**Key Features**
+- Hub-Spoke VNET with firewalls
+- VM Scale Set running NGINX
+- Application Gateway health checks
+- Evidence of backend health + scaling
+
+**Evidence**
+- ✅ AppGW backend probe screenshots
+- ✅ VMSS scaling observed
+- ✅ Curl health checks saved in repo
+
+📄 See: [`project-7-azure-ha-web`](./project-7-azure-ha-web)
+
+---
+
+---
+
+## 🧹 Project 8: Cleanup & Cost Control
+
+**Goal:** Ensure all showcase projects remain cost-efficient and do not accumulate unnecessary charges across Azure, AWS, or GCP.
+
+### Key Practices
+- **Terraform destroy** workflows included to safely tear down infra
+- **Azure cleanup scripts**:
+  - Delete AKS clusters and node resource groups
+  - Remove ACRs, Key Vaults, Log Analytics Workspaces
+  - Respect Key Vault soft-delete protections
+- **AWS & GCP cleanup**:
+  - Destroy EKS and GKE clusters after demos
+  - Remove load balancers, IPs, and disks tied to projects
+- **Monitoring**:
+  - Evidence captured before teardown for audit trail
+  - Prometheus/Grafana dashboards exported before delete
+
+### SRE Mapping
+- **Cost Awareness:** Uses free-tier SKUs (e.g., B2ms in Azure AKS)
+- **Governance:** Enforces teardown after each demo project
+- **Auditability:** Evidence folders prove deployments before cleanup
+- **Resilience in Practice:** Demonstrates lifecycle of build → validate → destroy
+
+---
+
+## 📫 Contact
+
+I maintain this repository as part of my professional portfolio.
+If you’d like to connect or discuss opportunities:
+
+- **LinkedIn**: [linkedin.com/in/chadalanlester](https://www.linkedin.com/in/chadalanlester)
+- **GitHub**: [github.com/chadalanlester](https://github.com/chadalanlester)
+- **Email**: chad@chadlester.com
+
+Always happy to talk about **SRE, DevSecOps, Kubernetes, automation, and resilient systems**.
+
+---
+
+## ✅ Final Notes
+
+This repository demonstrates my **end-to-end approach as an SRE**:
+
+- 🔹 Infrastructure-as-Code with **Terraform** and **Ansible**
+- 🔹 **Kubernetes-first design** with GitOps, monitoring, and self-healing
+- 🔹 Strong **DevSecOps practices** with CI/CD, security scans, and RBAC
+- 🔹 Commitment to **coding standards, documentation, and evidence-based delivery**
+- 🔹 Focus on **resilience, observability, and cost control** — critical in real-world production
+
+Future projects will expand into advanced topics such as **multi-region failover, compliance automation, and AI-assisted incident response**.
+
+This repo is designed for employers, peers, and collaborators to **see real, working examples of enterprise-grade SRE practices**.
