@@ -38,6 +38,12 @@ resource "azurerm_kubernetes_cluster" "aks" {
   workload_identity_enabled = true
 
   default_node_pool {
+    name                         = "system"
+    vm_size                      = var.system_vm_size
+    type                         = "VirtualMachineScaleSets"
+    node_count                   = 1
+    only_critical_addons_enabled = true
+    orchestrator_version         = var.kubernetes_version
   }
 
   network_profile {
