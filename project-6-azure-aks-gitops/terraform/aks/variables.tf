@@ -31,12 +31,12 @@ variable "kubernetes_version" {
 
 variable "system_vm_size" {
   type    = string
-  default = "Standard_D4s_v5"
+  default = "Standard_B1ms"
 }
 
 variable "user_vm_size" {
   type    = string
-  default = "Standard_D4s_v5"
+  default = "Standard_B1ms"
 }
 
 variable "user_min" {
@@ -46,7 +46,7 @@ variable "user_min" {
 
 variable "user_max" {
   type    = number
-  default = 3
+  default = 1
 }
 
 variable "gitops_repo_url" {
