@@ -52,7 +52,7 @@ resource "azurerm_key_vault" "kv" {
   purge_protection_enabled   = true
 
   network_acls {
-    default_action = "Allow"
+    default_action = "Allow" # tighten in prod
     bypass         = "AzureServices"
   }
 
@@ -68,9 +68,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   kubernetes_version        = var.kubernetes_version
   automatic_channel_upgrade = "stable"
 
-  identity {
-    type = "SystemAssigned"
-  }
+  identity { type = "SystemAssigned" }
 
   oidc_issuer_enabled       = true
   workload_identity_enabled = true
@@ -82,10 +80,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     node_count                   = 1
     only_critical_addons_enabled = true
     orchestrator_version         = var.kubernetes_version
-
-    upgrade_settings {
-      max_surge = "33%"
-    }
+    upgrade_settings { max_surge = "33%" }
   }
 
   network_profile {
@@ -94,21 +89,16 @@ resource "azurerm_kubernetes_cluster" "aks" {
     outbound_type     = "loadBalancer"
   }
 
-  azure_active_directory_role_based_access_control {
-    managed = true
-    # admin_group_object_ids = [] # set if you have an AAD group
-  }
+  # AAD v2 (managed=true). Provider v3 shows deprecation warning, safe to keep.
+  azure_active_directory_role_based_access_control { managed = true }
 
-  # Replaces deprecated addon_profile. Supported in azurerm v3.x
-  oms_agent {
-    log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
-  }
-
-  key_vault_secrets_provider {
-    secret_rotation_enabled = true
-  }
-
+  # Replaces deprecated addon_profile
+  oms_agent { log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id }
+  key_vault_secrets_provider { secret_rotation_enabled = true }
   azure_policy_enabled = true
+
+  # Defender for Containers attaches via LAW in v3 with this block
+  microsoft_defender { log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id }
 
   tags = var.tags
 }
@@ -158,24 +148,18 @@ resource "azurerm_monitor_diagnostic_setting" "aksdiag" {
     content {
       category = log.value
       enabled  = true
-      retention_policy {
-        enabled = false
-      }
+      retention_policy { enabled = false }
     }
   }
 
-  lifecycle {
-    ignore_changes = [log]
-  }
+  lifecycle { ignore_changes = [log] } # categories drift over time
 }
 
 resource "azurerm_kubernetes_cluster_extension" "flux" {
-  name                       = "flux"
-  cluster_id                 = azurerm_kubernetes_cluster.aks.id
-  extension_type             = "flux"
-  release_train              = "Stable"
-  auto_upgrade_minor_version = true
-  tags                       = var.tags
+  name           = "flux"
+  cluster_id     = azurerm_kubernetes_cluster.aks.id
+  extension_type = "flux"
+  release_train  = "Stable"
 }
 
 resource "azurerm_kubernetes_flux_configuration" "gitops" {
@@ -204,7 +188,6 @@ resource "azurerm_kubernetes_flux_configuration" "gitops" {
   tags       = var.tags
 }
 
-# Optional policy assignment at the AKS resource scope
 resource "azurerm_resource_policy_assignment" "aks_initiative" {
   count                = var.policy_set_definition_id != "" ? 1 : 0
   name                 = "${var.name_prefix}-aks-security"
