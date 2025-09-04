@@ -206,9 +206,9 @@ resource "azurerm_kubernetes_flux_configuration" "gitops" {
 
 # Optional policy assignment at the AKS resource scope
 resource "azurerm_resource_policy_assignment" "aks_initiative" {
-  count               = var.policy_set_definition_id != "" ? 1 : 0
-  name                = "${var.name_prefix}-aks-security"
+  count                = var.policy_set_definition_id != "" ? 1 : 0
+  name                 = "${var.name_prefix}-aks-security"
   policy_definition_id = var.policy_set_definition_id
-  resource_id         = azurerm_kubernetes_cluster.aks.id
-  location            = var.location
+  resource_id          = azurerm_kubernetes_cluster.aks.id
+  location             = var.location
 }
