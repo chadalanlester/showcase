@@ -44,9 +44,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
     node_count                   = 1
     only_critical_addons_enabled = true
     orchestrator_version         = var.kubernetes_version
-    upgrade_settings {
-      max_surge = "1"
-    }
   }
 
 
@@ -68,20 +65,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
   tags = var.tags
 }
 
-resource "azurerm_kubernetes_cluster_node_pool" "user" {
-  name                  = "workload"
-  kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
-  vm_size               = var.user_vm_size
-  node_count            = var.user_min
-  min_count             = var.user_min
-  max_count             = var.user_max
-  enable_auto_scaling   = true
-  mode                  = "User"
-  orchestrator_version  = var.kubernetes_version
-  max_pods              = 60
-  node_taints           = []
-  tags                  = var.tags
-}
 
 resource "azurerm_role_assignment" "acrpull" {
   scope                = data.azurerm_container_registry.acr.id
@@ -89,38 +72,7 @@ resource "azurerm_role_assignment" "acrpull" {
   principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
 }
 
-resource "azurerm_kubernetes_cluster_extension" "flux" {
-  name           = "flux"
-  cluster_id     = azurerm_kubernetes_cluster.aks.id
-  extension_type = "flux"
-  release_train  = "Stable"
-}
 
-resource "azurerm_kubernetes_flux_configuration" "gitops" {
-  name       = "cluster-gitops"
-  cluster_id = azurerm_kubernetes_cluster.aks.id
-  scope      = "cluster"
-  namespace  = "flux-system"
-
-  git_repository {
-    url                      = var.gitops_repo_url
-    reference_type           = "branch"
-    reference_value          = var.gitops_repo_branch
-    sync_interval_in_seconds = 60
-    timeout_in_seconds       = 600
-  }
-
-  kustomizations {
-    name                       = "apps"
-    path                       = var.gitops_repo_path
-    garbage_collection_enabled = true
-    retry_interval_in_seconds  = 30
-    sync_interval_in_seconds   = 60
-    timeout_in_seconds         = 600
-  }
-
-  depends_on = [azurerm_kubernetes_cluster_extension.flux]
-}
 
 resource "azurerm_resource_policy_assignment" "aks_initiative" {
   count                = var.policy_set_definition_id != "" ? 1 : 0
