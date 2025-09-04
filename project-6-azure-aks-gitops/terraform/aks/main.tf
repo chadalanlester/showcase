@@ -45,8 +45,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
     node_count                   = 1
     only_critical_addons_enabled = true
     orchestrator_version         = var.kubernetes_version
-    upgrade_settings { max_surge = "0" } # free-tier friendly
-  }
+    upgrade_settings { max_surge = "0"  max_unavailable = "1" }
 
   network_profile {
     network_plugin    = "azure"
