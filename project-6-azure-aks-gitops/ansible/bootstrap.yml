@@ -1,0 +1,26 @@
+---
+- name: AKS bootstrap
+  hosts: local
+  gather_facts: false
+  vars:
+    kubeconfig_path: "{{ lookup('env','KUBECONFIG') | default('~/.kube/config', true) }}"
+  tasks:
+    - name: Create platform namespaces
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig_path }}"
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata: { name: apps }
+    - name: Default deny for apps
+      kubernetes.core.k8s:
+        kubeconfig: "{{ kubeconfig_path }}"
+        state: present
+        definition:
+          apiVersion: networking.k8s.io/v1
+          kind: NetworkPolicy
+          metadata: { name: default-deny-all, namespace: apps }
+          spec:
+            podSelector: {}
+            policyTypes: ["Ingress","Egress"]

@@ -100,3 +100,43 @@
 # - Spike 5xx? Check AppGW WAF logs in Log Analytics; validate health probe; scale VMSS if needed
 # - Egress blocks? Check Azure Firewall logs; confirm route tables on spoke subnets
 # - Host issues? Use Ansible job to roll content change or run a custom script via VMSS extension
+
+
+**Stack:** Terraform, Azure Hub-Spoke (Hub: Firewall + Bastion, Spoke: App Gateway WAF v2 + VMSS), Log Analytics + AMA, Diagnostic Settings.
+
+**Why (SRE):**
+- **HA:** App Gateway v2 autoscale + stateless VMSS web tier.
+- **Security:** Hub-Spoke isolation, egress via Azure Firewall, Bastion for admin, WAF in prevention mode.
+- **Observability:** AMA to Log Analytics; AGW/Firewall/Bastion diagnostics enabled.
+- **IR readiness:** Central logs, backend health probes, rebuildable IaC.
+
+**Key Terraform:**
+- Hub VNet (`AzureFirewallSubnet`, `AzureBastionSubnet`) + Spoke VNet (`appgw-subnet`, `web-subnet`)
+- Route table on **web-subnet only** with `0.0.0.0/0 -> Firewall`
+- App Gateway WAF v2 (HTTP for demo) with probe and backend HTTP settings
+- VMSS (Ubuntu 22.04) cloud-init installs NGINX
+- Log Analytics workspace + Data Collection Rule + AMA on VMSS
+- Diagnostic Settings to LAW on AGW, Firewall, Bastion
+
+**Evidence (latest run):**
+- `project-7-azure-ha-web/evidence/<timestamp>/terraform-outputs.txt`
+  - Includes `appgw_public_ip`, `resource_group`, `bastion_name`.
+- `project-7-azure-ha-web/evidence/<timestamp>/appgw-curl-head.txt`
+  - Shows `HTTP/1.1 200 OK` from App Gateway.
+- `project-7-azure-ha-web/evidence/<timestamp>/appgw-backend-health.(txt|json)`
+  - Backend pool status = **Healthy**.
+- `project-7-azure-ha-web/evidence/<timestamp>/vmss-instances.txt` and `vmss-runcommand-nginx.json`
+  - NGINX active and serving locally on instances.
+- `project-7-azure-ha-web/evidence/<timestamp>/diag-*.json`
+  - Diagnostic Settings bound for AGW/Firewall/Bastion.
+- `project-7-azure-ha-web/evidence/<timestamp>/az-resource-list.txt`
+  - Full RG inventory snapshot.
+
+**How to deploy (Mac):**
+```bash
+cd project-7-azure-ha-web/terraform
+terraform init -backend-config=backend.hcl
+terraform fmt -recursive && terraform validate
+terraform apply -auto-approve
+APPGW_IP="$(terraform output -raw appgw_public_ip)"; echo "$APPGW_IP"
+curl -I "http://$APPGW_IP"   # Expect 200 OK

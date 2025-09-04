@@ -1,0 +1,38 @@
+{
+  "backendAddressPools": [
+    {
+      "backendAddressPool": {
+        "id": "/subscriptions/b03c950e-9e0b-4b46-98f4-7ff621152c35/resourceGroups/p7-8rk3k-rg/providers/Microsoft.Network/applicationGateways/p7-8rk3k-agw/backendAddressPools/be-pool",
+        "resourceGroup": "p7-8rk3k-rg"
+      },
+      "backendHttpSettingsCollection": [
+        {
+          "backendHttpSettings": {
+            "id": "/subscriptions/b03c950e-9e0b-4b46-98f4-7ff621152c35/resourceGroups/p7-8rk3k-rg/providers/Microsoft.Network/applicationGateways/p7-8rk3k-agw/backendHttpSettingsCollection/be-httpsettings",
+            "resourceGroup": "p7-8rk3k-rg"
+          },
+          "servers": [
+            {
+              "address": "10.1.1.4",
+              "health": "Healthy",
+              "healthProbeLog": "Success. Received 200 status code",
+              "ipConfiguration": {
+                "id": "/subscriptions/b03c950e-9e0b-4b46-98f4-7ff621152c35/resourceGroups/p7-8rk3k-rg/providers/Microsoft.Compute/virtualMachineScaleSets/p7-8rk3k-web-vmss/virtualMachines/0/networkInterfaces/vmss-nic/ipConfigurations/vmss-ipcfg",
+                "resourceGroup": "p7-8rk3k-rg"
+              }
+            },
+            {
+              "address": "10.1.1.7",
+              "health": "Unhealthy",
+              "healthProbeLog": "Cannot connect to backend server. Check whether any NSG/UDR/Firewall is blocking access to the server. Check if application is running on correct port. To learn more visit - https://aka.ms/servernotreachable.",
+              "ipConfiguration": {
+                "id": "/subscriptions/b03c950e-9e0b-4b46-98f4-7ff621152c35/resourceGroups/p7-8rk3k-rg/providers/Microsoft.Compute/virtualMachineScaleSets/p7-8rk3k-web-vmss/virtualMachines/3/networkInterfaces/vmss-nic/ipConfigurations/vmss-ipcfg",
+                "resourceGroup": "p7-8rk3k-rg"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
