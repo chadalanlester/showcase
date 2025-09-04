@@ -4,16 +4,14 @@ locals {
 
 data "azurerm_client_config" "current" {}
 
-resource "azurerm_resource_group" "rg" {
-  name     = var.resource_group_name
-  location = var.location
-
+data "azurerm_resource_group" "rg" {
+  name = var.resource_group_name
 }
 
 resource "azurerm_log_analytics_workspace" "law" {
   name                = "${var.name_prefix}-law"
   location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = data.azurerm_resource_group.rg.name
   sku                 = "PerGB2018"
   retention_in_days   = 30
   tags                = var.tags
@@ -22,7 +20,7 @@ resource "azurerm_log_analytics_workspace" "law" {
 resource "azurerm_log_analytics_solution" "containerinsights" {
   solution_name         = "ContainerInsights"
   location              = azurerm_log_analytics_workspace.law.location
-  resource_group_name   = azurerm_resource_group.rg.name
+  resource_group_name   = data.azurerm_resource_group.rg.name
   workspace_resource_id = azurerm_log_analytics_workspace.law.id
   workspace_name        = azurerm_log_analytics_workspace.law.name
   plan {
@@ -34,7 +32,7 @@ resource "azurerm_log_analytics_solution" "containerinsights" {
 
 resource "azurerm_container_registry" "acr" {
   name                = replace("${var.name_prefix}acr", "-", "")
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = data.azurerm_resource_group.rg.name
   location            = var.location
   sku                 = "Standard"
   admin_enabled       = false
@@ -43,7 +41,7 @@ resource "azurerm_container_registry" "acr" {
 
 resource "azurerm_key_vault" "kv" {
   name                       = replace("${var.name_prefix}-kv", "-", "")
-  resource_group_name        = azurerm_resource_group.rg.name
+  resource_group_name        = data.azurerm_resource_group.rg.name
   location                   = var.location
   tenant_id                  = data.azurerm_client_config.current.tenant_id
   sku_name                   = "standard"
@@ -62,7 +60,7 @@ resource "azurerm_key_vault" "kv" {
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = local.name
   location            = var.location
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = data.azurerm_resource_group.rg.name
   dns_prefix          = "${var.name_prefix}-dns"
 
   kubernetes_version        = var.kubernetes_version
