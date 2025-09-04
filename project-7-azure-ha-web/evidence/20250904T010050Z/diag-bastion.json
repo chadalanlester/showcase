@@ -1,0 +1,29 @@
+[
+  {
+    "id": "/subscriptions/b03c950e-9e0b-4b46-98f4-7ff621152c35/resourcegroups/p7-8rk3k-rg/providers/microsoft.network/bastionhosts/p7-8rk3k-bastion/providers/microsoft.insights/diagnosticSettings/p7-8rk3k-bastion-diag",
+    "logs": [
+      {
+        "category": "BastionAuditLogs",
+        "enabled": true,
+        "retentionPolicy": {
+          "days": 0,
+          "enabled": false
+        }
+      }
+    ],
+    "metrics": [
+      {
+        "category": "AllMetrics",
+        "enabled": true,
+        "retentionPolicy": {
+          "days": 0,
+          "enabled": false
+        }
+      }
+    ],
+    "name": "p7-8rk3k-bastion-diag",
+    "resourceGroup": "p7-8rk3k-rg",
+    "type": "Microsoft.Insights/diagnosticSettings",
+    "workspaceId": "/subscriptions/b03c950e-9e0b-4b46-98f4-7ff621152c35/resourceGroups/p7-8rk3k-rg/providers/Microsoft.OperationalInsights/workspaces/p7-8rk3k-law"
+  }
+]

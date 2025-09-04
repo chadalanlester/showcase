@@ -157,7 +157,7 @@ publishable SRE project.
 - ✅ EC2 instance with monitoring and security groups
 - ✅ Clean public GitHub repo with history rewritten via `git-filter-repo`
 
-📄 See full project here:  
+📄 See full project here:
 [`case-platform-project`](./case-platform-project)
 
 ---
@@ -180,7 +180,7 @@ using **Argo CD** + **Terraform**.
 - ✅ Demo `hello` app deployed via Argo CD
 - ✅ Monitoring dashboards accessible on both clouds
 
-📄 See full project here:  
+📄 See full project here:
 [`project-1-multicloud-gitops`](./project-1-multicloud-gitops)
 
 ---
@@ -213,7 +213,7 @@ resilience validation using a fun **Flask Trivia API**.
 - ✅ Prometheus metrics integrated
 - ✅ GitHub Actions pipeline executes resilience tests
 
-📄 See full project here:  
+📄 See full project here:
 [`project-4-resilient-app`](./project-4-resilient-app)
 
 ---
@@ -234,7 +234,7 @@ resources should be torn down after testing to avoid unnecessary charges.
    helm uninstall argocd -n argocd
    kubectl delete ns argocd --wait=true
 
-3. **Tear down AWS EKS**  
+3. **Tear down AWS EKS**
    ```bash
    cd project-1-multicloud-gitops/terraform/aws-eks
    export AWS_PROFILE=AdministratorAccess-<account_id>
@@ -242,10 +242,9 @@ resources should be torn down after testing to avoid unnecessary charges.
      -var region=us-west-1 \
      -var principal_arn=$PRINCIPAL_ARN
 
-4. **Tear down GKE**  
+4. **Tear down GKE**
    ```bash
    cd project-1-multicloud-gitops/terraform/gcp-gke
    terraform destroy -auto-approve \
      -var "project=chad-homelab" \
      -var "region=us-central1-a"
-
