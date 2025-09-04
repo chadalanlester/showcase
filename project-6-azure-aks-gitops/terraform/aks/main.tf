@@ -4,59 +4,30 @@ locals {
 
 data "azurerm_client_config" "current" {}
 
+# Existing resources (avoid imports)
 data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
 
 data "azurerm_log_analytics_workspace" "law" {
-  name                = "-law"
-  resource_group_name = data.data.azurerm_resource_group.rg.name
-}-law"
-  location            = var.location
-  resource_group_name = data.data.azurerm_resource_group.rg.name
-  sku                 = "PerGB2018"
-  retention_in_days   = 30
-  tags                = var.tags
-}
-
-  tags = var.tags
+  name                = "${var.name_prefix}-law"
+  resource_group_name = data.azurerm_resource_group.rg.name
 }
 
 data "azurerm_container_registry" "acr" {
-  name                = replace("acr", "-", "")
-  resource_group_name = data.data.azurerm_resource_group.rg.name
-}acr", "-", "")
-  resource_group_name = data.data.azurerm_resource_group.rg.name
-  location            = var.location
-  sku                 = "Standard"
-  admin_enabled       = false
-  tags                = var.tags
+  name                = replace("${var.name_prefix}acr", "-", "")
+  resource_group_name = data.azurerm_resource_group.rg.name
 }
 
 data "azurerm_key_vault" "kv" {
-  name                = replace("-kv", "-", "")
-  resource_group_name = data.data.azurerm_resource_group.rg.name
-}-kv", "-", "")
-  resource_group_name        = data.data.azurerm_resource_group.rg.name
-  location                   = var.location
-  tenant_id                  = data.azurerm_client_config.current.tenant_id
-  sku_name                   = "standard"
-  enable_rbac_authorization  = true
-  soft_delete_retention_days = 7
-  purge_protection_enabled   = true
-
-  network_acls {
-    default_action = "Allow" # tighten in prod
-    bypass         = "AzureServices"
-  }
-
-  tags = var.tags
+  name                = replace("${var.name_prefix}-kv", "-", "")
+  resource_group_name = data.azurerm_resource_group.rg.name
 }
 
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = local.name
   location            = var.location
-  resource_group_name = data.data.azurerm_resource_group.rg.name
+  resource_group_name = data.azurerm_resource_group.rg.name
   dns_prefix          = "${var.name_prefix}-dns"
 
   kubernetes_version        = var.kubernetes_version
@@ -69,12 +40,12 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   default_node_pool {
     name                         = "system"
-    vm_size                      = var.system_vm_size
+    vm_size                      = var.system_vm_size # set in variables.tf (use Standard_B1ms/B2s)
     type                         = "VirtualMachineScaleSets"
     node_count                   = 1
     only_critical_addons_enabled = true
     orchestrator_version         = var.kubernetes_version
-    upgrade_settings { max_surge = "0" }
+    upgrade_settings { max_surge = "0" } # free-tier friendly
   }
 
   network_profile {
@@ -83,15 +54,16 @@ resource "azurerm_kubernetes_cluster" "aks" {
     outbound_type     = "loadBalancer"
   }
 
-  # AAD v2 (managed=true). Provider v3 shows deprecation warning, safe to keep.
+  # AAD managed RBAC (v3 warns; safe, required true)
   azure_active_directory_role_based_access_control { managed = true }
 
-  # Replaces deprecated addon_profile
-  oms_agent { log_analytics_workspace_id = data.azurerm_log_analytics_workspace.law.id }
+  # Use existing LAW for control-plane / daemonset agent
+  oms_agent {
+    log_analytics_workspace_id = data.azurerm_log_analytics_workspace.law.id
+  }
+
   key_vault_secrets_provider { secret_rotation_enabled = true }
   azure_policy_enabled = true
-
-  # Defender for Containers attaches via LAW in v3 with this block
 
   tags = var.tags
 }
@@ -111,34 +83,14 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
   tags                  = var.tags
 }
 
+# Allow AKS to pull images from existing ACR
 resource "azurerm_role_assignment" "acrpull" {
   scope                = data.azurerm_container_registry.acr.id
   role_definition_name = "AcrPull"
   principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
 }
 
-
-  dynamic "log" {
-    for_each = [
-      "kube-apiserver",
-      "kube-audit",
-      "kube-audit-admin",
-      "kube-controller-manager",
-      "kube-scheduler",
-      "cluster-autoscaler",
-      "cloud-controller-manager",
-      "guard"
-    ]
-    content {
-      category = log.value
-      enabled  = true
-      retention_policy { enabled = false }
-    }
-  }
-
-  lifecycle { ignore_changes = [log] } # categories drift over time
-}
-
+# Flux extension + config from this repo
 resource "azurerm_kubernetes_cluster_extension" "flux" {
   name           = "flux"
   cluster_id     = azurerm_kubernetes_cluster.aks.id
@@ -157,6 +109,7 @@ resource "azurerm_kubernetes_flux_configuration" "gitops" {
     reference_type           = "branch"
     reference_value          = var.gitops_repo_branch
     sync_interval_in_seconds = 60
+    timeout_in_seconds       = 600
   }
 
   kustomizations {
@@ -171,6 +124,7 @@ resource "azurerm_kubernetes_flux_configuration" "gitops" {
   depends_on = [azurerm_kubernetes_cluster_extension.flux]
 }
 
+# Optional: assign an initiative at the AKS resource if provided
 resource "azurerm_resource_policy_assignment" "aks_initiative" {
   count                = var.policy_set_definition_id != "" ? 1 : 0
   name                 = "${var.name_prefix}-aks-security"
