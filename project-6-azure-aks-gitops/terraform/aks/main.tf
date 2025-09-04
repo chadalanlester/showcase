@@ -185,7 +185,6 @@ resource "azurerm_kubernetes_flux_configuration" "gitops" {
   }
 
   depends_on = [azurerm_kubernetes_cluster_extension.flux]
-  tags       = var.tags
 }
 
 resource "azurerm_resource_policy_assignment" "aks_initiative" {
