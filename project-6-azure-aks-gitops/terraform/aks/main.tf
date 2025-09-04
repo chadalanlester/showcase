@@ -95,28 +95,20 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   azure_active_directory_role_based_access_control {
-    managed                = true
-    admin_group_object_ids = []
+    managed = true
+    # admin_group_object_ids = [] # set if you have an AAD group
   }
 
-  addon_profile {
-    oms_agent {
-      log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
-    }
-    azure_policy {
-      enabled = true
-    }
-    kube_dashboard {
-      enabled = false
-    }
-    azure_keyvault_secrets_provider {
-      secret_rotation_enabled = true
-    }
-  }
-
-  microsoft_defender {
+  # Replaces deprecated addon_profile. Supported in azurerm v3.x
+  oms_agent {
     log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
   }
+
+  key_vault_secrets_provider {
+    secret_rotation_enabled = true
+  }
+
+  azure_policy_enabled = true
 
   tags = var.tags
 }
@@ -212,15 +204,11 @@ resource "azurerm_kubernetes_flux_configuration" "gitops" {
   tags       = var.tags
 }
 
-resource "azurerm_policy_assignment" "aks_initiative" {
-  count                = var.policy_set_definition_id != "" ? 1 : 0
-  name                 = "${var.name_prefix}-aks-security"
-  display_name         = "AKS Security Baseline (project-6)"
-  scope                = azurerm_kubernetes_cluster.aks.id
+# Optional policy assignment at the AKS resource scope
+resource "azurerm_resource_policy_assignment" "aks_initiative" {
+  count               = var.policy_set_definition_id != "" ? 1 : 0
+  name                = "${var.name_prefix}-aks-security"
   policy_definition_id = var.policy_set_definition_id
-  enforcement_mode     = "Default"
-
-  identity {
-    type = "SystemAssigned"
-  }
+  resource_id         = azurerm_kubernetes_cluster.aks.id
+  location            = var.location
 }
