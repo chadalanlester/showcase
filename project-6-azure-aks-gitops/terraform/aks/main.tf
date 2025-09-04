@@ -85,7 +85,7 @@ resource "azurerm_resource_policy_assignment" "aks_initiative" {
 resource "azurerm_kubernetes_cluster_node_pool" "work" {
   name                  = "work"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
-  vm_size               = "Standard_B2ms"   # meets AKS min; small quota footprint
+  vm_size               = "Standard_B2ms" # meets AKS min; small quota footprint
   node_count            = 1
   mode                  = "User"
   enable_auto_scaling   = false
