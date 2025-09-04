@@ -8,40 +8,36 @@ data "azurerm_resource_group" "rg" {
   name = var.resource_group_name
 }
 
-resource "azurerm_log_analytics_workspace" "law" {
-  name                = "${var.name_prefix}-law"
+data "azurerm_log_analytics_workspace" "law" {
+  name                = "-law"
+  resource_group_name = data.data.azurerm_resource_group.rg.name
+}-law"
   location            = var.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  resource_group_name = data.data.azurerm_resource_group.rg.name
   sku                 = "PerGB2018"
   retention_in_days   = 30
   tags                = var.tags
 }
 
-resource "azurerm_log_analytics_solution" "containerinsights" {
-  solution_name         = "ContainerInsights"
-  location              = azurerm_log_analytics_workspace.law.location
-  resource_group_name   = data.azurerm_resource_group.rg.name
-  workspace_resource_id = azurerm_log_analytics_workspace.law.id
-  workspace_name        = azurerm_log_analytics_workspace.law.name
-  plan {
-    publisher = "Microsoft"
-    product   = "OMSGallery/ContainerInsights"
-  }
   tags = var.tags
 }
 
-resource "azurerm_container_registry" "acr" {
-  name                = replace("${var.name_prefix}acr", "-", "")
-  resource_group_name = data.azurerm_resource_group.rg.name
+data "azurerm_container_registry" "acr" {
+  name                = replace("acr", "-", "")
+  resource_group_name = data.data.azurerm_resource_group.rg.name
+}acr", "-", "")
+  resource_group_name = data.data.azurerm_resource_group.rg.name
   location            = var.location
   sku                 = "Standard"
   admin_enabled       = false
   tags                = var.tags
 }
 
-resource "azurerm_key_vault" "kv" {
-  name                       = replace("${var.name_prefix}-kv", "-", "")
-  resource_group_name        = data.azurerm_resource_group.rg.name
+data "azurerm_key_vault" "kv" {
+  name                = replace("-kv", "-", "")
+  resource_group_name = data.data.azurerm_resource_group.rg.name
+}-kv", "-", "")
+  resource_group_name        = data.data.azurerm_resource_group.rg.name
   location                   = var.location
   tenant_id                  = data.azurerm_client_config.current.tenant_id
   sku_name                   = "standard"
@@ -60,7 +56,7 @@ resource "azurerm_key_vault" "kv" {
 resource "azurerm_kubernetes_cluster" "aks" {
   name                = local.name
   location            = var.location
-  resource_group_name = data.azurerm_resource_group.rg.name
+  resource_group_name = data.data.azurerm_resource_group.rg.name
   dns_prefix          = "${var.name_prefix}-dns"
 
   kubernetes_version        = var.kubernetes_version
@@ -91,12 +87,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
   azure_active_directory_role_based_access_control { managed = true }
 
   # Replaces deprecated addon_profile
-  oms_agent { log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id }
+  oms_agent { log_analytics_workspace_id = data.azurerm_log_analytics_workspace.law.id }
   key_vault_secrets_provider { secret_rotation_enabled = true }
   azure_policy_enabled = true
 
   # Defender for Containers attaches via LAW in v3 with this block
-  microsoft_defender { log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id }
 
   tags = var.tags
 }
@@ -117,20 +112,11 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
 }
 
 resource "azurerm_role_assignment" "acrpull" {
-  scope                = azurerm_container_registry.acr.id
+  scope                = data.azurerm_container_registry.acr.id
   role_definition_name = "AcrPull"
   principal_id         = azurerm_kubernetes_cluster.aks.kubelet_identity[0].object_id
 }
 
-resource "azurerm_monitor_diagnostic_setting" "aksdiag" {
-  name                       = "aks-diagnostics"
-  target_resource_id         = azurerm_kubernetes_cluster.aks.id
-  log_analytics_workspace_id = azurerm_log_analytics_workspace.law.id
-
-  metric {
-    category = "AllMetrics"
-    enabled  = true
-  }
 
   dynamic "log" {
     for_each = [
