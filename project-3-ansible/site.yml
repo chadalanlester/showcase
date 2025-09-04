@@ -1,7 +1,0 @@
----
-- hosts: all
-  gather_facts: false
-  tasks:
-    - name: Example debug
-      ansible.builtin.debug:
-        msg: "Hello from showcase workflow"
