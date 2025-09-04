@@ -7,7 +7,7 @@ data "azurerm_client_config" "current" {}
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.location
-  tags     = var.tags
+
 }
 
 resource "azurerm_log_analytics_workspace" "law" {
@@ -176,12 +176,12 @@ resource "azurerm_kubernetes_flux_configuration" "gitops" {
   }
 
   kustomizations {
-    name                      = "apps"
-    path                      = var.gitops_repo_path
-    prune                     = true
-    retry_interval_in_seconds = 30
-    sync_interval_in_seconds  = 60
-    timeout_in_seconds        = 600
+    name                       = "apps"
+    path                       = var.gitops_repo_path
+    garbage_collection_enabled = true
+    retry_interval_in_seconds  = 30
+    sync_interval_in_seconds   = 60
+    timeout_in_seconds         = 600
   }
 
   depends_on = [azurerm_kubernetes_cluster_extension.flux]
