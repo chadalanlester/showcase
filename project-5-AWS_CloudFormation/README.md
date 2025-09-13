@@ -40,3 +40,10 @@ aws cloudformation list-stack-resources --stack-name project-5-AWS-CloudFormatio
 ```bash
 aws sns publish --region us-east-1 --topic-arn arn:aws:sns:us-east-1:565092613177:project-5-AWS_CloudFormation-alerts --subject "SNS test" --message "OK"
 ```
+
+## Teardown & hygiene
+
+All resources are provisioned via CloudFormation and removed with:
+```bash
+aws cloudformation delete-stack --stack-name project-5-AWS-CloudFormation --region us-east-1
+aws cloudformation wait stack-delete-complete --stack-name project-5-AWS-CloudFormation --region us-east-1
