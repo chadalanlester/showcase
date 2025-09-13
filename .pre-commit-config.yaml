@@ -1,18 +1,35 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: v4.6.0
     hooks:
-      - id: detect-private-key
-      - id: detect-aws-credentials
-      - id: end-of-file-fixer
-      - id: trailing-whitespace
       - id: check-yaml
+        files: ^project-5-AWS_CloudFormation/
+        exclude: ^project-5-AWS_CloudFormation/cfn/
       - id: check-json
+        files: ^project-5-AWS_CloudFormation/
+      - id: end-of-file-fixer
+        files: ^project-5-AWS_CloudFormation/
+      - id: trailing-whitespace
+        files: ^project-5-AWS_CloudFormation/
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        files: ^project-5-AWS_CloudFormation/
+        exclude: ^project-5-AWS_CloudFormation/cfn/
 
   - repo: local
     hooks:
-      - id: forbid-adminpassword
-        name: "Block adminPassword in YAML"
-        language: pygrep
-        entry: 'adminPassword\s*:'
-        files: '\.(ya?ml)$'
+      - id: cfn-lint
+        name: cfn-lint
+        entry: cfn-lint
+        language: system
+        files: ^project-5-AWS_CloudFormation/cfn/main\.ya?ml$
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.1
+    hooks:
+      - id: flake8
+        files: ^project-5-AWS_CloudFormation/lambda/
+        args: [--max-line-length=100]

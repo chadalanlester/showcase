@@ -1,0 +1,20 @@
+---
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install cfn-lint yamllint flake8
+      - run: cfn-lint project-5-AWS_CloudFormation/cfn/main.yaml
+      - run: yamllint project-5-AWS_CloudFormation
+      - run: flake8 project-5-AWS_CloudFormation/lambda
