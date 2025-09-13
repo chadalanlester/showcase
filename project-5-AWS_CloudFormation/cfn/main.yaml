@@ -1,0 +1,325 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Free-tier SRE Showcase - VPC, EC2, IAM, Lambda, EventBridge, CloudWatch, SNS
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: project-5-AWS_CloudFormation
+    Description: Project name prefix for tagging and resource names
+  VpcCidr:
+    Type: String
+    Default: 10.10.0.0/16
+  PublicSubnetCidr:
+    Type: String
+    Default: 10.10.1.0/24
+  InstanceType:
+    Type: String
+    Default: t2.micro
+    AllowedValues: [t2.micro, t3.micro]
+  KeyPairName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Description: Existing EC2 Key Pair for SSH
+  SSHAllowedCidr:
+    Type: String
+    Default: 0.0.0.0/0
+    Description: Restrict SSH in production
+  EnableHttpHealthCheck:
+    Type: String
+    AllowedValues: [true, false]
+    Default: true
+  HttpHealthCheckPath:
+    Type: String
+    Default: '/'
+
+Mappings:
+  RegionMap:
+    us-east-1: { AMI: ami-0c02fb55956c7d316 }
+    us-east-2: { AMI: ami-089c6f2fff6fce6a5 }
+    us-west-2: { AMI: ami-0d593311db5abb72b }
+    eu-west-1: { AMI: ami-052efd3df9dad4825 }
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCidr
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags: [{ Key: Name, Value: !Sub '${ProjectName}-vpc' }]
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags: [{ Key: Name, Value: !Sub '${ProjectName}-igw' }]
+
+  VPCGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: !Ref PublicSubnetCidr
+      MapPublicIpOnLaunch: true
+      Tags: [{ Key: Name, Value: !Sub '${ProjectName}-public-az1' }]
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+  PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PublicRouteTable
+
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH and HTTP
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - { IpProtocol: tcp, FromPort: 22, ToPort: 22, CidrIp: !Ref SSHAllowedCidr }
+        - { IpProtocol: tcp, FromPort: 80, ToPort: 80, CidrIp: 0.0.0.0/0 }
+      Tags: [{ Key: Name, Value: !Sub '${ProjectName}-sg' }]
+
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: ec2.amazonaws.com }
+            Action: sts:AssumeRole
+      Path: '/'
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+      Policies:
+        - PolicyName: InstanceMinimal
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: '*'
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles: [!Ref InstanceRole]
+      Path: '/'
+
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap [RegionMap, !Ref 'AWS::Region', AMI]
+      InstanceType: !Ref InstanceType
+      IamInstanceProfile: !Ref InstanceProfile
+      SubnetId: !Ref PublicSubnet
+      SecurityGroupIds: [!Ref InstanceSecurityGroup]
+      KeyName: !Ref KeyPairName
+      Tags: [{ Key: Name, Value: !Sub '${ProjectName}-web' }]
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs: { VolumeSize: 10, VolumeType: gp3 }
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash -xe
+          yum update -y
+          amazon-linux-extras install nginx1 -y || yum install -y nginx
+          echo "<h1>${ProjectName}: it works</h1>" > /usr/share/nginx/html/index.html
+          systemctl enable nginx && systemctl start nginx
+
+  Topic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub '${ProjectName}-alerts'
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: { Service: lambda.amazonaws.com }
+            Action: sts:AssumeRole
+      Path: '/'
+      Policies:
+        - PolicyName: LambdaMinimal
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - ec2:DescribeInstances
+                  - ec2:DescribeInstanceStatus
+                  - ec2:RebootInstances
+                  - ec2:StartInstances
+                  - ec2:StopInstances
+                Resource: '*'
+              - Effect: Allow
+                Action: sns:Publish
+                Resource: !Ref Topic
+
+  HealthCheckFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub '${ProjectName}-healthcheck'
+      Handler: index.lambda_handler
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: python3.11
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          INSTANCE_ID: !Ref EC2Instance
+          CHECK_HTTP: !Ref EnableHttpHealthCheck
+          HTTP_PATH: !Ref HttpHealthCheckPath
+          SNS_TOPIC_ARN: !Ref Topic
+      Code:
+        ZipFile: |
+          import json, os, time, urllib.request
+          import boto3
+
+          EC2 = boto3.client('ec2')
+          SNS_ARN = os.getenv('SNS_TOPIC_ARN')
+          INSTANCE_ID = os.getenv('INSTANCE_ID')
+          CHECK_HTTP = os.getenv('CHECK_HTTP', 'true').lower() == 'true'
+          HTTP_PATH = os.getenv('HTTP_PATH', '/')
+
+          def _public_ip(instance_id):
+              for r in EC2.describe_instances(InstanceIds=[instance_id])['Reservations']:
+                  for i in r['Instances']:
+                      return i.get('PublicIpAddress')
+              return None
+
+          def _status_checks(instance_id):
+              resp = EC2.describe_instance_status(InstanceIds=[instance_id], IncludeAllInstances=True)
+              if not resp['InstanceStatuses']:
+                  return {'InstanceStatus': 'unknown', 'SystemStatus': 'unknown', 'State': 'unknown'}
+              st = resp['InstanceStatuses'][0]
+              return {
+                  'InstanceStatus': st['InstanceStatus']['Status'],
+                  'SystemStatus': st['SystemStatus']['Status'],
+                  'State': st['InstanceState']['Name'],
+              }
+
+          def _http_ok(ip, path):
+              try:
+                  with urllib.request.urlopen(f'http://{ip}{path}', timeout=5) as r:
+                      return r.status == 200
+              except Exception:
+                  return False
+
+          def _notify(subject, msg):
+              boto3.client('sns').publish(TopicArn=SNS_ARN, Subject=subject, Message=msg)
+
+          def _auto_remediate(instance_id, ip):
+              _notify('Auto-remediation starting', f'Rebooting {instance_id} ({ip})')
+              EC2.reboot_instances(InstanceIds=[instance_id])
+
+          def lambda_handler(event, context):
+              st = _status_checks(INSTANCE_ID)
+              ip = _public_ip(INSTANCE_ID)
+              http_ok = _http_ok(ip, HTTP_PATH) if (CHECK_HTTP and ip) else None
+              needs_action = (CHECK_HTTP and http_ok is False) or (st.get('InstanceStatus') != 'ok')
+
+              summary = {
+                  'instance': INSTANCE_ID,
+                  'ip': ip,
+                  'status': st,
+                  'http_ok': http_ok,
+                  'timestamp': int(time.time()),
+              }
+
+              if needs_action:
+                  _notify('HealthCheck failed', json.dumps(summary, indent=2))
+                  _auto_remediate(INSTANCE_ID, ip)
+
+              return summary
+
+  FiveMinuteRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: !Sub '${ProjectName}-health-schedule'
+      ScheduleExpression: rate(5 minutes)
+      State: ENABLED
+      Targets:
+        - Arn: !GetAtt HealthCheckFunction.Arn
+          Id: HealthCheckTarget
+
+  PermissionForEventsToInvokeLambda:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref HealthCheckFunction
+      Action: lambda:InvokeFunction
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt FiveMinuteRule.Arn
+
+  CPUHighAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${ProjectName}-CPU-High'
+      Namespace: AWS/EC2
+      MetricName: CPUUtilization
+      Dimensions:
+        - { Name: InstanceId, Value: !Ref EC2Instance }
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: missing
+      AlarmActions: [!Ref Topic]
+      OKActions: [!Ref Topic]
+
+  StatusCheckFailedAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub '${ProjectName}-StatusCheckFailed'
+      Namespace: AWS/EC2
+      MetricName: StatusCheckFailed
+      Dimensions:
+        - { Name: InstanceId, Value: !Ref EC2Instance }
+      Statistic: Maximum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      AlarmActions: [!Ref Topic]
+      OKActions: [!Ref Topic]
+
+Outputs:
+  InstanceId:
+    Value: !Ref EC2Instance
+  InstancePublicIP:
+    Value: !GetAtt EC2Instance.PublicIp
+  WebURL:
+    Value: !Sub 'http://${EC2Instance.PublicIp}/'
+  AlertsTopicArn:
+    Value: !Ref Topic
+  LambdaName:
+    Value: !Ref HealthCheckFunction
