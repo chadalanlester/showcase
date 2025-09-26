@@ -1,0 +1,55 @@
+stages: [lint, test, plan, apply]
+
+variables:
+  TF_IN_AUTOMATION: "true"
+  TF_INPUT: "0"
+  AWS_DEFAULT_REGION: "us-east-1"
+
+cache:
+  paths:
+    - .terraform/
+
+before_script:
+  - pip install black flake8 pytest
+  - curl -sLo terraform.zip https://releases.hashicorp.com/terraform/1.9.5/terraform_1.9.5_linux_amd64.zip
+  - unzip -o terraform.zip -d /usr/local/bin
+  - terraform -version
+
+lint:
+  stage: lint
+  image: python:3.12-slim
+  script:
+    - black --check src
+    - flake8 src
+
+unit_tests:
+  stage: test
+  image: python:3.12-slim
+  script:
+    - pytest -q
+
+plan:
+  stage: plan
+  image: hashicorp/terraform:1.9.5
+  script:
+    - cd infra
+    - terraform init
+    - terraform validate
+    - terraform plan -var alert_email="$ALERT_EMAIL" -out tfplan
+  artifacts:
+    paths:
+      - infra/tfplan
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main" || $CI_COMMIT_BRANCH =~ /deploy\/.*/'
+
+apply:
+  stage: apply
+  image: hashicorp/terraform:1.9.5
+  script:
+    - cd infra
+    - terraform init
+    - terraform apply -auto-approve -var alert_email="$ALERT_EMAIL"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+      when: manual
+      allow_failure: false
