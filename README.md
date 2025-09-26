@@ -337,6 +337,45 @@ All implemented reproducibly and cost-effectively within the **AWS Free Tier**.
 - **Auditability:** Evidence folders prove deployments before cleanup  
 - **Resilience in Practice:** Demonstrates lifecycle of build → validate → destroy  
 ⸻  
+
+## 🚀 Project 9: AWS AI Feedback Triage
+
+**Status:** Completed (tag: `v1.0.1`)  
+**Repo:** [project-9-aws-ai-feedback-triage](./project-9-aws-ai-feedback-triage)  
+
+This project implements an **end-to-end serverless system on AWS** for ingesting, analyzing, and triaging customer feedback in real time.
+
+### 🔹 Key Features
+- **Serverless ingestion** via **API Gateway** and **S3 batch uploads**
+- **Natural Language Processing** with **Amazon Comprehend**  
+  - Sentiment detection (positive/negative/neutral/mixed)  
+  - Entity and key phrase extraction  
+- **Storage & persistence** with **Amazon DynamoDB**
+- **Alerts & monitoring**  
+  - **SNS email alerts** on negative sentiment or pipeline errors  
+  - **CloudWatch Alarms & Dashboard** for unified observability
+- **Infrastructure-as-Code** with **Terraform**  
+  - Parameterized, reusable modules  
+  - One-command deploy/destroy (`make deploy`, `terraform destroy`)  
+  - `.gitignore` + `git filter-repo` used to keep TF state/build artifacts clean
+
+### 📸 Screenshots & Diagrams
+- [Architecture Diagram](./project-9-aws-ai-feedback-triage/docs/architecture.png)  
+- [Setup & Walkthrough](./project-9-aws-ai-feedback-triage/docs/README.md)  
+
+### 🛠️ Tech Stack
+- **AWS Lambda (Python 3.12)**  
+- **Amazon API Gateway (HTTP API)**  
+- **Amazon S3**  
+- **Amazon Comprehend**  
+- **Amazon DynamoDB**  
+- **Amazon SNS**  
+- **Amazon CloudWatch (Dashboard + Alarms)**  
+- **Terraform** (modular IaC)  
+
+👉 This project demonstrates a **production-grade reference architecture** for **real-time AI-driven feedback triage**. It’s directly applicable to **customer support automation, feedback loops, or monitoring pipelines** where **serverless + NLP** can reduce manual effort.  
+
+⸻
 ## **📫 Contact**  
   
 I maintain this repository as part of my professional portfolio.   
