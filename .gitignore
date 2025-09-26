@@ -11,3 +11,10 @@ kubeconfig*
 *.crt
 id_rsa*
 id_ed25519*
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+tfplan
+# Lambda build zips
+infra/build/
