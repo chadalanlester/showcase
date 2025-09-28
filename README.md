@@ -1,402 +1,247 @@
-## **👋 About Me**  
-  
-I’m **Chad Lester**, a **Site Reliability Engineer (SRE)**.   
-This repository is part of my professional portfolio — a **public showcase** of my skills and approach to automation, infrastructure-as-code, and DevSecOps practices.  
-  
-I maintain a full homelab environment where I build and test modern infrastructure patterns using:  
-- 🖥️ **Proxmox** for virtualization  
-- ☸️ **Kubernetes** for orchestration  
-- 🛠️ **GitHub Actions** and **GitLab CI/CD** for pipelines  
-- 📦 **Docker**, **Terraform**, and **Ansible** for automation and provisioning  
-- 📊 **Prometheus**, **Grafana**, **Alertmanager** for monitoring and alerting  
-  
-I also work with **public cloud providers** — **Azure**, **AWS**, and **Google Cloud** — and showcase workflows and IaC examples for these platforms.  
-  
-This repository is meant for **employers** to review my skills in action: demonstrating clarity, automation, and security-first design.  
-  
-# **Showcase Workflows**  
-  
-This repository contains **sanitized, public-safe examples** of the CI/CD and DevSecOps pipelines I run in my homelab.   
-It demonstrates how I structure pipelines, enforce security scanning, and integrate Infrastructure-as-Code checks — without exposing real secrets or infrastructure.  
-⸻  
-## **🚀 Workflows**  
-  
-### **Continuous Integration (CI)**  
-[Showcase CI](https://github.com/chadalanlester/showcase/actions/workflows/ci.yml)  
-  
-The **CI pipeline** runs automatically on pushes, pull requests, or manual dispatch.   
-It demonstrates a full multi-stage process:  
-  
-- **Linting**  
-    - YAML lint (==yamllint==)  
-- **Infrastructure-as-Code (IaC)**  
-    - Terraform ==init== + ==plan==  
-- **Security scanning**  
-    - Trivy filesystem scan  
-    - tfsec Terraform security analysis  
-- **Software Bill of Materials (SBOM)**  
-    - Syft generates SPDX JSON artifact  
-  
-### **Security Scans**  
-[Security Scans](https://github.com/chadalanlester/showcase/actions/workflows/security.yml)  
-  
-The **Security workflow** provides a focused DevSecOps example:  
-- **Trivy** for vulnerability/misconfiguration scanning  
-- **tfsec** for Terraform static analysis  
-- **Syft** for SBOM generation and artifact upload  
-⸻  
-## **🛡️ Security & Compliance**  
-  
-- All scans run in **Docker containers**, no host dependencies.  
-- **No secrets required** — workflows run safely in public without exposing credentials.  
-- **SBOM artifacts** are generated and uploaded for transparency.  
-⸻  
-## **💡 Key Practices Demonstrated**  
-  
-- ✅ Multi-stage CI/CD with dependencies  
-- ✅ Infrastructure-as-Code validation (Terraform)  
-- ✅ Security scanning with Trivy, tfsec  
-- ✅ SBOM generation (Syft)  
-- ✅ Style compliance with yamllint  
-- ✅ GitHub Actions badges for instant visibility  
-⸻  
-🧰**** Technologies × Workflows****  
+# 🚀 SRE Portfolio Showcase
 
-| Technology / Tool | Showcase CI | Security Scans |
-| --------------------- | ---------------------------------- | ---------------------- |
-| YAML Lint (yamllint) | ✅ | ❌ |
-| Terraform (init/plan) | ✅ | ✅ (scanned with tfsec) |
-| Ansible | Demo playbook included | ❌ |
-| Trivy | ✅ (filesystem scan) | ✅ (filesystem scan) |
-| tfsec | ✅ | ✅ |
-| Syft (SBOM) | ✅ | ✅ |
-| Docker | ✅ (all jobs run via Docker images) | ✅ |
-| GitHub Actions | ✅ | ✅ |
-  
-  
-✅ = tool is actively used in that workflow   
-❌ = not applicable  
-⸻  
-## **📝 Notes**  
-  
-- **Terraform** → Uses only ==null_resource== → safe and non-destructive.  
-- **Ansible** → Playbook contains a simple ==debug== message → illustrates CI integration, but does not target real hosts.  
-- **Badges** → Reflect the current status of CI and security scans on the ==main== branch.  
-⸻  
-## **👀 For Employers**  
-  
-This repository is a **showcase of my skills as an SRE**.   
-It demonstrates:  
-  
-- My ability to design and implement structured pipelines  
-- A strong focus on **automation, security, and maintainability**  
-- Hands-on experience across **on-prem (homelab)** and **cloud platforms (Azure, AWS, GCP)**  
-- **Kubernetes expertise**: GitOps with Argo CD, Helm, Prometheus/Grafana monitoring, RBAC governance  
-- Clear **coding and documentation standards**: consistent style, linting, evidence-driven workflows  
-- A professional, transparent way of documenting and presenting technical work  
-⸻  
-# **🚀 SRE Showcase – Multi-Cloud & Resilience Projects**  
-  
-This repository demonstrates **Site Reliability Engineering (SRE)** practices across multiple clouds (AWS, Azure, GCP), GitOps (Argo CD, FluxCD), observability (Prometheus & Grafana), security controls, and resilience testing.  
-  
-Each project is structured with:  
-- 📂 Infrastructure-as-Code (Terraform, Ansible, Helm)  
-- 🔐 Security & compliance scans (tfsec, Trivy, RBAC policies)  
-- 📊 Monitoring & evidence capture  
-- 📜 Documentation & GitOps-style workflows  
-⸻  
-## **🌍 Project 1: Multi-Cloud GitOps with Argo CD**  
-  
-**Goal:** Deploy and manage workloads on **AWS EKS** and **GCP GKE** clusters using Argo CD GitOps.  
-  
-**Key Features**  
-- Terraform to provision:  
-    - AWS EKS in ==us-west-1==  
-    - GCP GKE in ==us-central1-a==  
-- Argo CD App-of-Apps pattern for GitOps sync  
-- Monitoring stack: Prometheus, Grafana, Alertmanager  
-  
-**Evidence**  
-- ✅ Hello app deployed to both EKS and GKE  
-- ✅ Grafana exposed via LoadBalancer  
-- ✅ Prometheus CRDs installed  
-  
-📄 See: [project-1-multicloud-gitops](./project-1-multicloud-gitops)  
-⸻  
-## **🏗️ Project 2: Case Platform (Vendor-Scrubbed)**  
-  
-**Goal:** Adapt a previous interview technical exercise into a neutral, public-safe SRE project.  
-  
-**Key Features**  
-- AWS VPC + EC2 with Terraform  
-- Security groups + monitoring  
-- CloudWatch alarms  
-- Cleaned of vendor references  
-  
-**Evidence**  
-- ✅ EC2 bootstrapped with demo app  
-- ✅ Security groups + CloudWatch monitoring  
-  
-📄 See: [project-2-case-platform](./project-2-case-platform)  
-⸻  
-## **🌐 Project 3: Multi-Cloud GitOps (EKS + GKE)**  
-  
-**Goal:** Deploy workloads consistently across AWS EKS and GCP GKE using Argo CD.  
-  
-**Key Features**  
-- IaC for AWS + GCP clusters  
-- Argo CD App-of-Apps pattern  
-- Monitoring stack (Prometheus + Grafana)  
-- Scripts for kubeconfig switching  
-  
-**Evidence**  
-- ✅ Hello demo app running in both clouds  
-- ✅ Observability dashboards up  
-  
-📄 See: [project-1-multicloud-gitops](./project-1-multicloud-gitops)  
-⸻  
-## **🛡️ Project 4: Resilient Web Application with Self-Healing**  
-  
-**Goal:** Showcase Kubernetes **self-healing, autoscaling, and chaos testing** with a Flask trivia API.  
-  
-**Key Features**  
-- Kubernetes Deployment with readiness/liveness probes  
-- HPA, PDBs, autoscaling  
-- Chaos testing scripts (kill pods, load gen, restart remediation)  
-- Prometheus SLO validation  
-  
-**Evidence**  
-- ✅ Pods recover after chaos tests  
-- ✅ Autoscaling under load  
-- ✅ Prometheus metrics validated  
-  
-📄 See: [project-4-resilient-app](./project-4-resilient-app)  
-⸻  
-## **📦 ## Project 5 – AWS CloudFormation SRE Showcase**  
-##   
-## **This project demonstrates how to provision and operate a resilient AWS workload using **CloudFormation**, **Lambda**, **CloudWatch**, and **SNS** — all within the AWS Free Tier.  **  
-## **It showcases **Site Reliability Engineering (SRE) practices** such as automated health checks, alerting, and self-healing.**  
-##   
-## **---**  
-##   
-## **### **🚀** Problem Statement**  
-## **Modern SREs need more than manual runbooks — they need **infrastructure as code**, automated monitoring, and **auto-remediation** to maintain service reliability with minimal human intervention.  **  
-## **This project explores how to implement those principles in AWS, reproducibly and cost-effectively.**  
-##   
-## **---**  
-##   
-## **### **🛠️** Solution**  
-## **- **CloudFormation (IaC):**  **  
-## **  Provisions the entire environment — EC2 instance, IAM roles, CloudWatch alarms, Lambda, and SNS topic — in a single reproducible template.**  
-## **- **EC2 Web Server:**  **  
-## **  A minimal nginx instance, used as the workload under test.**  
-## **- **Lambda Healthcheck:**  **  
-## **  Periodically checks the instance’s EC2/system status *and* HTTP response.  **  
-## **  - Publishes findings to SNS.  **  
-## **  - Auto-remediates by rebooting the instance if checks fail.**  
-## **- **CloudWatch Alarms:**  **  
-## **  - CPU utilization threshold.  **  
-## **  - Status check failures.  **  
-## **- **SNS Notifications:**  **  
-## **  Sends alerts via email to the on-call SRE (configured during deployment).**  
-## **- **Pre-commit + CI Linting:**  **  
-## **  Enforces YAML, CloudFormation, and Python quality gates both locally and in GitHub Actions.**  
-##   
-## **---**  
-##   
-## **### **✅** Verification Evidence**  
-## **Key runtime checks performed during deployment:**  
-##   
-## **- Stack: `project-5-AWS-CloudFormation` in `us-east-1`**  
-## **- Instance: Provisioned EC2 with public IP**  
-## **- SNS Topic: Verified email subscription**  
-##   
-## **```bash**  
-## **# Health check over HTTP**  
-## **curl -I http://<EC2_IP>/**  
-##   
-## **# Lambda on-demand check**  
-## **aws lambda invoke --function-name project-5-AWS_CloudFormation-healthcheck \**  
-## **  --region us-east-1 /dev/stdout | jq .**  
-##   
-## **# Alarms present**  
-## **aws cloudformation list-stack-resources \**  
-## **  --stack-name project-5-AWS-CloudFormation --region us-east-1 \**  
-## **  --query "StackResourceSummaries[?ResourceType=='AWS::CloudWatch::Alarm'].[LogicalResourceId,PhysicalResourceId]" \**  
-## **  --output table**  
-##   
-## **# SNS test**  
-## **aws sns publish --region us-east-1 \**  
-## **  --topic-arn <TOPIC_ARN> \**  
-## **  --subject "SNS test" --message "OK"**  
-  
-**---**  
-  
-**### **🧹** Teardown / Cost Control**  
-**All resources can be safely deleted with:**  
-  
-**```bash**  
-**aws cloudformation delete-stack --stack-name project-5-AWS-CloudFormation --region us-east-1**  
-  
-Additional cleanup steps:  
-	•	**EC2 Key Pair:** Delete the key pair in AWS and securely remove the local .pem file.  
-	•	**Lambda Logs:** Delete the /aws/lambda/project-5-AWS_CloudFormation-healthcheck log group.  
-	•	**Lambda Logs:** Delete the /aws/lambda/project-5-AWS_CloudFormation-healthcheck log group.  
-	•	**SSH Cleanup:** Remove the EC2 IP entry from ~/.ssh/known_hosts.  
-	•	**SSH Cleanup:** Remove the EC2 IP entry from ~/.ssh/known_hosts.  
-	•	**CloudWatch/SNS Audit:** Confirm no orphaned alarms or topics remain.  
-  
-⸻  
-  
-📚** Lessons Learned**  
-	•	CloudFormation templates require exact alignment between the **Lambda handler** (index.lambda_handler) and the deployed Python code.  
-	•	**Pre-commit hooks** (yamllint, cfn-lint, flake8) helped enforce quality, but intrinsic functions (!Ref, !Sub) required YAML exclusions.  
-	•	set-alarm-state is useful for testing CloudWatch alarms, but names must exactly match deployed resources.  
-	•	**Cleanup discipline** (stack deletion, key removal, log cleanup) is essential to avoid hidden AWS charges.  
-	•	**Cleanup discipline** (stack deletion, key removal, log cleanup) is essential to avoid hidden AWS charges.  
-  
-⸻  
-  
-🌟** Key Takeaway**  
-  
-This project demonstrates **end-to-end SRE practices**:  
-	•	Infrastructure as Code (CloudFormation)  
-	•	Monitoring and alerting (CloudWatch + SNS)  
-	•	Automated remediation (Lambda healthcheck + EC2 reboot)  
-	•	CI/CD and quality gates (pre-commit, GitHub Actions)  
-  
-All implemented reproducibly and cost-effectively within the **AWS Free Tier**.  
-⸻  
-## **☸️ Project 6: Azure AKS GitOps**  
-  
-**Goal:** Deploy a production-style **AKS (Azure Kubernetes Service)** cluster with **GitOps**, observability, and secure supply chain integrations — while staying within free-tier limits.  
-  
-### **Key Features**  
-- Terraform + GitHub Actions deploy AKS with:  
-    - System pool (B2ms) and workload pool (B2ms)  
-    - Azure RBAC enabled with minimal cluster role bindings  
-    - ACR integration (==AcrPull== role assignment)  
-    - Key Vault CSI driver integration (future-ready)  
-- Monitoring stack via Helm:  
-    - Prometheus, Alertmanager, Grafana exposed via LoadBalancer  
-    - Default-deny NetworkPolicy  
-- Evidence captured under ==project-6-azure-aks-gitops/evidence/==  
-  
-### **Evidence**  
-- ==project-6-azure-aks-gitops/evidence/*/nodes.txt==  
-- ==project-6-azure-aks-gitops/evidence/*/monitoring-pods.txt==  
-- ==project-6-azure-aks-gitops/evidence/*/monitoring-svc.txt==  
-  
-### **SRE Mapping**  
-- **GitOps & Change Control:** Terraform plans in CI; Helm releases recorded  
-- **Observability:** Prometheus + Grafana + Alertmanager; LB dashboards  
-- **Secure Supply Chain:** ACR AcrPull, OIDC auth, KV CSI-ready  
-- **RBAC & Governance:** Azure RBAC + minimal in-cluster binding; Policy add-on  
-- **Folder:** ==project-6-azure-aks-gitops==  
-⸻  
-## **🏛️ Project 7: Azure HA Web on Hub-Spoke + VMSS**  
-  
-**Goal:** Build a **high-availability web service** in Azure using **Hub-Spoke networking** and **VM Scale Sets**.  
-  
-**Key Features**  
-- Hub-Spoke VNET with firewalls  
-- VM Scale Set running NGINX  
-- Application Gateway health checks  
-- Evidence of backend health + scaling  
-  
-**Evidence**  
-- ✅ AppGW backend probe screenshots  
-- ✅ VMSS scaling observed  
-- ✅ Curl health checks saved in repo  
-  
-📄 See: [project-7-azure-ha-web](./project-7-azure-ha-web)  
-⸻  
-⸻  
-  
-  
-## **🧹 Project 8: Cleanup & Cost Control**  
-  
-**Goal:** Ensure all showcase projects remain cost-efficient and do not accumulate unnecessary charges across Azure, AWS, or GCP.  
-  
-### **Key Practices**  
-- **Terraform destroy** workflows included to safely tear down infra  
-- **Azure cleanup scripts**:  
-    - Delete AKS clusters and node resource groups  
-    - Remove ACRs, Key Vaults, Log Analytics Workspaces  
-    - Respect Key Vault soft-delete protections  
-- **AWS & GCP cleanup**:  
-    - Destroy EKS and GKE clusters after demos  
-    - Remove load balancers, IPs, and disks tied to projects  
-- **Monitoring**:  
-    - Evidence captured before teardown for audit trail  
-    - Prometheus/Grafana dashboards exported before delete  
-  
-### **SRE Mapping**  
-- **Cost Awareness:** Uses free-tier SKUs (e.g., B2ms in Azure AKS)  
-- **Governance:** Enforces teardown after each demo project  
-- **Auditability:** Evidence folders prove deployments before cleanup  
-- **Resilience in Practice:** Demonstrates lifecycle of build → validate → destroy  
-⸻  
+**Chad Lester** | Site Reliability Engineer  
+**Professional Portfolio for Prospective Employers**
 
-## 🚀 Project 9: AWS AI Feedback Triage
+[![Showcase CI](https://github.com/chadalanlester/showcase/actions/workflows/ci.yml/badge.svg)](https://github.com/chadalanlester/showcase/actions/workflows/ci.yml)
+[![Security Scans](https://github.com/chadalanlester/showcase/actions/workflows/security.yml/badge.svg)](https://github.com/chadalanlester/showcase/actions/workflows/security.yml)
 
-**Status:** Completed (tag: `v1.0.1`)  
-**Repo:** [project-9-aws-ai-feedback-triage](./project-9-aws-ai-feedback-triage)  
+---
 
-This project implements an **end-to-end serverless system on AWS** for ingesting, analyzing, and triaging customer feedback in real time.
+## 👋 About This Portfolio
 
-### 🔹 Key Features
-- **Serverless ingestion** via **API Gateway** and **S3 batch uploads**
-- **Natural Language Processing** with **Amazon Comprehend**  
-  - Sentiment detection (positive/negative/neutral/mixed)  
-  - Entity and key phrase extraction  
-- **Storage & persistence** with **Amazon DynamoDB**
-- **Alerts & monitoring**  
-  - **SNS email alerts** on negative sentiment or pipeline errors  
-  - **CloudWatch Alarms & Dashboard** for unified observability
-- **Infrastructure-as-Code** with **Terraform**  
-  - Parameterized, reusable modules  
-  - One-command deploy/destroy (`make deploy`, `terraform destroy`)  
-  - `.gitignore` + `git filter-repo` used to keep TF state/build artifacts clean
+This repository is **my professional showcase** as a **Site Reliability Engineer**. It contains **production-ready examples** and **working demonstrations** of enterprise SRE practices across multi-cloud environments. 
 
-### 📸 Screenshots & Diagrams
-- [Architecture Diagram](./project-9-aws-ai-feedback-triage/docs/architecture.png)  
-- [Setup & Walkthrough](./project-9-aws-ai-feedback-triage/docs/README.md)  
+**For Hiring Managers & Technical Interviewers**: Each project demonstrates real-world SRE skills with **evidence-based delivery**, showing not just what I can build, but how I operate, monitor, and maintain systems at scale.
 
-### 🛠️ Tech Stack
-- **AWS Lambda (Python 3.12)**  
-- **Amazon API Gateway (HTTP API)**  
-- **Amazon S3**  
-- **Amazon Comprehend**  
-- **Amazon DynamoDB**  
-- **Amazon SNS**  
-- **Amazon CloudWatch (Dashboard + Alarms)**  
-- **Terraform** (modular IaC)  
+### 🎯 What This Demonstrates
+- ✅ **Multi-cloud expertise** across AWS, Azure, and GCP
+- ✅ **Infrastructure-as-Code** mastery with Terraform and Ansible  
+- ✅ **Kubernetes-first** approach with GitOps and observability
+- ✅ **DevSecOps integration** with automated security scanning
+- ✅ **Cost-conscious engineering** using free-tier resources
+- ✅ **Professional documentation** and evidence capture
 
-👉 This project demonstrates a **production-grade reference architecture** for **real-time AI-driven feedback triage**. It’s directly applicable to **customer support automation, feedback loops, or monitoring pipelines** where **serverless + NLP** can reduce manual effort.  
+---
 
-⸻
-## **📫 Contact**  
-  
-I maintain this repository as part of my professional portfolio.   
-If you’d like to connect or discuss opportunities:  
-  
-- **LinkedIn**: [linkedin.com/in/chadalanlester](https://www.linkedin.com/in/chadalanlester)  
-- **GitHub**: [github.com/chadalanlester](https://github.com/chadalanlester)  
-- **Email**: [chad@chadlester.com](mailto:chad@chadlester.com)  
-  
-Always happy to talk about **SRE, DevSecOps, Kubernetes, automation, and resilient systems**.  
-⸻  
-## **✅ Final Notes**  
-  
-This repository demonstrates my **end-to-end approach as an SRE**:  
-  
-- 🔹 Infrastructure-as-Code with **Terraform** and **Ansible**  
-- 🔹 **Kubernetes-first design** with GitOps, monitoring, and self-healing  
-- 🔹 Strong **DevSecOps practices** with CI/CD, security scans, and RBAC  
-- 🔹 Commitment to **coding standards, documentation, and evidence-based delivery**  
-- 🔹 Focus on **resilience, observability, and cost control** — critical in real-world production  
-  
-Future projects will expand into advanced topics such as **multi-region failover, compliance automation, and AI-assisted incident response**.  
-  
-This repo is designed for employers, peers, and collaborators to **see real, working examples of enterprise-grade SRE practices**.  
+## 🛠️ Core Technologies
+
+| Category | Technologies |
+|----------|-------------|
+| **☸️ Orchestration** | Kubernetes, Docker, Helm |
+| **🏗️ Infrastructure** | Terraform, Ansible, Proxmox |
+| **☁️ Cloud Providers** | AWS (EKS), Azure (AKS), GCP (GKE) |
+| **🔄 GitOps** | Argo CD, FluxCD |
+| **📊 Monitoring** | Prometheus, Grafana, Alertmanager, CloudWatch |
+| **🔒 Security** | Trivy, tfsec, RBAC, Network Policies |
+| **🚀 CI/CD** | GitHub Actions, GitLab CI/CD |
+
+---
+
+## 🔧 Automated Workflows
+
+### 🏗️ [Showcase CI](https://github.com/chadalanlester/showcase/actions/workflows/ci.yml)
+**Multi-stage pipeline demonstrating production CI/CD practices:**
+- 📝 **Code Quality**: YAML linting (yamllint)
+- 🏗️ **Infrastructure**: Terraform validation (init/plan)
+- 🛡️ **Security**: Trivy vulnerability scans, tfsec analysis
+- 📋 **Compliance**: SBOM generation with Syft
+
+### 🔐 [Security Scans](https://github.com/chadalanlester/showcase/actions/workflows/security.yml)
+**DevSecOps-focused security automation:**
+- 🔍 Container vulnerability scanning (Trivy)
+- 🔒 Infrastructure security analysis (tfsec)
+- 📦 Supply chain transparency (SBOM artifacts)
+
+---
+
+## 📁 Project Portfolio
+
+> **For Employers**: Each project includes **evidence artifacts**, **screenshots**, and **validation steps** proving successful deployment and operation.
+
+### 1. 🌐 Multi-Cloud GitOps with Argo CD
+**Path**: `project-1-multicloud-gitops`
+
+**Demonstrates**: Multi-cloud orchestration and GitOps mastery
+- 🏗️ Terraform provisioning across AWS EKS and GCP GKE
+- 🔄 Argo CD App-of-Apps pattern implementation
+- 📊 End-to-end monitoring stack (Prometheus, Grafana, Alertmanager)
+- 🌍 Cross-cloud workload synchronization
+
+**💡 Key Skills**: Multi-cloud architecture, GitOps workflows, infrastructure automation  
+**📸 Evidence**: Working applications in both clouds, operational dashboards
+
+### 2. 🏗️ Case Platform (Vendor-Neutral)
+**Path**: `project-2-case-platform`
+
+**Demonstrates**: Enterprise infrastructure patterns and interview-ready solutions
+- 🔧 AWS VPC and EC2 provisioning with Terraform
+- 🛡️ Security group configuration and monitoring
+- 📈 CloudWatch alarms and observability
+- 🏢 Sanitized enterprise architecture patterns
+
+**💡 Key Skills**: AWS infrastructure, security design, monitoring setup  
+**📸 Evidence**: Deployed infrastructure, monitoring configurations
+
+### 3. ☸️ Multi-Cloud Kubernetes (EKS + GKE)
+**Path**: `project-3-multicloud-k8s`
+
+**Demonstrates**: Kubernetes expertise across cloud providers
+- 🏗️ Infrastructure-as-Code for AWS and GCP clusters
+- 🔄 Consistent GitOps deployment patterns
+- 📊 Unified monitoring across cloud boundaries
+- 🔧 Kubeconfig management automation
+
+**💡 Key Skills**: Kubernetes operations, cloud-agnostic design, automation  
+**📸 Evidence**: Cross-cloud application deployments, unified dashboards
+
+### 4. 🔄 Resilient Web Application with Self-Healing
+**Path**: `project-4-resilient-app`
+
+**Demonstrates**: Production reliability and chaos engineering
+- ⚕️ Kubernetes health probes and self-healing
+- 📈 Horizontal Pod Autoscaling and Pod Disruption Budgets
+- 🎭 Chaos testing and failure recovery
+- 📊 SLO validation with Prometheus metrics
+
+**💡 Key Skills**: Site reliability patterns, chaos engineering, performance optimization  
+**📸 Evidence**: Automated recovery demonstrations, scaling under load, metrics validation
+
+### 5. ☁️ AWS CloudFormation SRE Showcase
+**Path**: `project-5-aws-cloudformation`
+
+**Demonstrates**: AWS-native automation and self-healing systems
+- 🏗️ CloudFormation infrastructure-as-code
+- 🤖 Lambda-based health checking and auto-remediation
+- 🚨 CloudWatch alarms and SNS alerting
+- 💰 Cost-optimized free-tier design
+
+**💡 Key Skills**: AWS automation, serverless operations, cost optimization  
+**📸 Evidence**: Self-healing demonstrations, alert testing, cost compliance
+
+### 6. ⚙️ Azure AKS GitOps
+**Path**: `project-6-azure-aks-gitops`
+
+**Demonstrates**: Enterprise Azure Kubernetes operations
+- 🏗️ Terraform automation with GitHub Actions
+- 🔐 Azure RBAC integration and ACR connectivity
+- 🔑 Key Vault CSI driver preparation
+- 🛡️ Network policies and security controls
+
+**💡 Key Skills**: Azure expertise, enterprise security, Kubernetes governance  
+**📸 Evidence**: Production-ready cluster, security configurations, monitoring stack
+
+### 7. 🌐 Azure HA Web on Hub-Spoke Architecture
+**Path**: `project-7-azure-ha-web`
+
+**Demonstrates**: High-availability web services and network design
+- 🏗️ Hub-Spoke network topology implementation
+- 📈 VM Scale Sets with intelligent auto-scaling
+- ⚖️ Application Gateway health probing
+- 🛡️ Network security and traffic management
+
+**💡 Key Skills**: Network architecture, high availability design, Azure expertise  
+**📸 Evidence**: HA validation, scaling demonstrations, health check verification
+
+### 8. 🧹 Cleanup & Cost Control
+**Path**: `project-8-cleanup-cost-control`
+
+**Demonstrates**: Operational discipline and cost management
+- 💰 **Cost Optimization**: Free-tier compliance across all projects
+- 🗑️ **Resource Lifecycle**: Automated teardown workflows
+- 📊 **Audit Trail**: Evidence capture before resource deletion
+- 🌐 **Multi-Cloud**: Cleanup procedures for AWS, Azure, GCP
+
+**💡 Key Skills**: Cost management, operational governance, resource lifecycle  
+**📸 Evidence**: Cost monitoring, cleanup automation, audit documentation
+
+### 9. 🤖 AWS AI Feedback Triage
+**Path**: `project-9-aws-ai-feedback-triage` | **Tag**: `v1.0.1`
+
+**Demonstrates**: Serverless AI integration and event-driven architecture
+- 📥 **Serverless Ingestion**: API Gateway and S3 batch processing
+- 🧠 **AI Processing**: Amazon Comprehend sentiment and entity analysis
+- 🗄️ **Data Persistence**: DynamoDB storage with event streaming
+- 🚨 **Intelligent Alerting**: SNS notifications and CloudWatch dashboards
+
+**💡 Key Skills**: Serverless architecture, AI/ML integration, event-driven design  
+**📸 Evidence**: Architecture diagrams, API testing, real-time processing demos
+
+### 10. 🔍 GCP AI-Powered Observability
+**Path**: `project-10-gcp-ai-observability`
+
+**Demonstrates**: Next-generation observability with AI-assisted operations
+- ☸️ **Modern Platform**: GKE Autopilot cluster automation
+- 📊 **Comprehensive Monitoring**: Prometheus, Grafana, kube-state-metrics
+- 🤖 **AI Operations**: K8sGPT operator for intelligent troubleshooting
+- 🏗️ **Infrastructure Automation**: Complete Terraform provisioning
+
+**💡 Key Skills**: Modern observability, AI-assisted operations, Google Cloud expertise  
+**📸 Evidence**: AI diagnostic outputs, monitoring dashboards, automated insights
+
+---
+
+## 🔒 Security & Compliance
+
+### 🛡️ Security-First Approach
+- 🔍 **Vulnerability Scanning**: Trivy container and filesystem analysis
+- 🏗️ **Infrastructure Security**: tfsec static analysis for Terraform
+- 📦 **Supply Chain**: SBOM generation and dependency tracking
+- 🔐 **Access Control**: RBAC implementation across all platforms
+- 🌐 **Network Security**: Network policies, security groups, firewalls
+
+### 📋 Compliance & Governance
+- 📝 **Audit Trail**: Git-based change tracking for all infrastructure
+- 📊 **Evidence Collection**: Runtime artifacts and validation screenshots
+- 🔒 **Policy Enforcement**: Automated security scanning in CI/CD pipelines
+- 💰 **Cost Compliance**: Free-tier boundaries respected across projects
+
+---
+
+## ✅ Quality Assurance
+
+### 🔧 Automated Testing
+- 📝 **Code Standards**: YAML, Terraform, Python linting
+- 🔒 **Security Gates**: Pre-commit hooks with vulnerability scanning
+- 🏗️ **Infrastructure Validation**: Terraform plan verification
+- 📚 **Documentation**: Markdown consistency and completeness
+
+### 📸 Evidence-Based Delivery
+- 🖼️ **Visual Proof**: Dashboard screenshots and system state captures
+- 📄 **Configuration Artifacts**: Exported manifests and runtime configs
+- 📊 **Operational Logs**: Deployment evidence and system metrics
+- ⚡ **Performance Data**: SLI/SLO measurements and reliability metrics
+
+---
+
+## 🚀 Why This Matters for Employers
+
+### 💼 Real-World Application
+**This isn't theoretical knowledge** - every project runs on actual infrastructure with real costs, real monitoring, and real operational challenges. I've solved the problems you'll face in production.
+
+### 🎯 Hiring Confidence
+- ✅ **Proven Expertise**: Working demonstrations across multiple cloud platforms
+- ✅ **Best Practices**: Industry-standard tools and methodologies
+- ✅ **Documentation Skills**: Clear, professional technical writing
+- ✅ **Cost Awareness**: Efficient resource usage and budget consciousness
+- ✅ **Security Mindset**: Security-by-default in all implementations
+
+### 🔄 Immediate Value
+**Day-one productivity** with demonstrated experience in:
+- Modern infrastructure patterns you're already using
+- Tools and platforms in your current stack
+- Operational practices that scale with your business
+
+---
+
+## 📞 Let's Connect
+
+Ready to discuss how these skills apply to your SRE challenges?
+
+- 💼 **LinkedIn**: [linkedin.com/in/chadalanlester](https://www.linkedin.com/in/chadalanlester)
+- 🐙 **GitHub**: [github.com/chadalanlester](https://github.com/chadalanlester)  
+- 📧 **Email**: [chad@chadlester.com](mailto:chad@chadlester.com)
+
+---
+
+**🎯 For Technical Interviewers**: Each project includes detailed setup instructions, evidence artifacts, and operational runbooks. Pick any project for deep-dive technical discussions - they're all production-ready and thoroughly documented.
