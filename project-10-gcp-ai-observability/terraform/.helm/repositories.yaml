@@ -1,0 +1,21 @@
+apiVersion: ""
+generated: "0001-01-01T00:00:00Z"
+repositories:
+- caFile: ""
+  certFile: ""
+  insecure_skip_tls_verify: false
+  keyFile: ""
+  name: prometheus-community
+  pass_credentials_all: false
+  password: ""
+  url: https://prometheus-community.github.io/helm-charts
+  username: ""
+- caFile: ""
+  certFile: ""
+  insecure_skip_tls_verify: false
+  keyFile: ""
+  name: k8sgpt
+  pass_credentials_all: false
+  password: ""
+  url: https://charts.k8sgpt.ai
+  username: ""

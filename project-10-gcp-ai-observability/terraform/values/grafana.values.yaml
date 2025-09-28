@@ -1,0 +1,53 @@
+replicas: 1
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  requests:
+    cpu: 20m
+    memory: 64Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi
+
+persistence:
+  enabled: false
+
+admin:
+  existingSecret: grafana-admin-credentials
+
+readinessProbe:
+  httpGet: { path: /api/health, port: 3000 }
+  initialDelaySeconds: 150
+  periodSeconds: 5
+  timeoutSeconds: 2
+  failureThreshold: 60
+
+livenessProbe:
+  httpGet: { path: /api/health, port: 3000 }
+  initialDelaySeconds: 240
+  periodSeconds: 10
+  timeoutSeconds: 3
+  failureThreshold: 12
+
+securityContext:
+  runAsUser: 472
+  runAsGroup: 472
+  runAsNonRoot: true
+podSecurityContext: {}
+
+sidecar:
+  dashboards: { enabled: false }
+  datasources: { enabled: false }
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus-server.monitoring.svc:80
+        isDefault: true
