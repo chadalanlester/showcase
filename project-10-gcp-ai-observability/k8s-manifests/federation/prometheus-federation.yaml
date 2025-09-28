@@ -1,0 +1,14 @@
+# Prometheus federation (placeholder)
+global:
+  scrape_interval: 60s
+scrape_configs:
+- job_name: 'federate'
+  honor_labels: true
+  metrics_path: /federate
+  params:
+    'match[]':
+    - '{job="kubernetes-pods"}'
+    - '{__name__=~"^kube_.*"}'
+  static_configs:
+  - targets:
+    - prometheus-server.monitoring.svc.cluster.local:80

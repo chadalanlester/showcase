@@ -1,0 +1,22 @@
+# Predictive HPA sketch (placeholder) – wire to Vertex AI/adapter in future
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: predictive-hpa
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: sample-app
+  minReplicas: 1
+  maxReplicas: 10
+  # NOTE: replace with a real external/custom metric exposed by your predictor
+  metrics:
+  - type: External
+    external:
+      metric:
+        name: predicted_qps
+      target:
+        type: Value
+        value: "20"

@@ -1,9 +1,12 @@
-# Terraform artifacts
-.terraform/
+# Terraform
 *.tfstate
 *.tfstate.*
+.terraform/
 terraform.tfvars
-tfplan
+.terraform.lock.hcl
+
+# Helm cache
+.helm/
 
 # Local / sensitive env
 .env
