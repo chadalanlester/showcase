@@ -1,0 +1,10 @@
+# showcase/project-10-gcp-ai-observability/terraform/values/k8sgpt-operator.values.yaml
+serviceMonitor:
+  enabled: true
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 50m
+    memory: 128Mi
