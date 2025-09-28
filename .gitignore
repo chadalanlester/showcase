@@ -1,20 +1,45 @@
+# Terraform artifacts
 .terraform/
-*.tfstate*
-*.tfvars
-.DS_Store
-.vscode/*
-!.vscode/extensions.json
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+tfplan
+
+# Local / sensitive env
 .env
-kubeconfig*
+.env.*
 *.pem
 *.key
 *.crt
 id_rsa*
 id_ed25519*
-# Terraform
-*.tfstate
-*.tfstate.*
-.terraform/
-tfplan
-# Lambda build zips
-infra/build/
+kubeconfig*
+kubeconfig-*
+
+# OS / Editor noise
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*~
+
+# Temporary / generated
+*.log
+*.tmp
+*.bak
+*~
+*#
+~$*
+
+# Project artifacts not for Git
+artifacts/
+screenshots/
+*.png
+*.jpeg
+*.jpg
+*.docx
+
+# Port-forward leftovers / debug
+nohup.out
+*.pid
