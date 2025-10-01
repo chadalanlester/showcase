@@ -1,8 +1,0 @@
-tenancy_ocid       = "ocid1.tenancy.oc1..aaaa..."
-compartment_ocid   = "ocid1.compartment.oc1..aaaa..."
-region             = "us-phoenix-1"
-kubernetes_version = ""
-node_count       = 2
-node_ocpus       = 1
-node_memory_gbs  = 6
-# Set atp_admin_password via environment variable TF_VAR_atp_admin_password
