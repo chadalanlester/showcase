@@ -1,48 +1,16 @@
-# Terraform
-*.tfstate
-*.tfstate.*
-.terraform/
-terraform.tfvars
-.terraform.lock.hcl
+# secrets
+ibmcloud_api_key.txt
 
-# Helm cache
-.helm/
-
-# Local / sensitive env
-.env
-.env.*
-*.pem
-*.key
-*.crt
-id_rsa*
-id_ed25519*
-kubeconfig*
-kubeconfig-*
-
-# OS / Editor noise
+# macOS
 .DS_Store
-.vscode/*
-!.vscode/extensions.json
-.idea/
-*.swp
-*~
 
-# Temporary / generated
-*.log
-*.tmp
-*.bak
-*~
-*#
-~$*
+# terraform
+terraform/.terraform/
+*.tfstate
+*.tfstate.backup
+crash.log
 
-# Project artifacts not for Git
-artifacts/
-screenshots/
-*.png
-*.jpeg
-*.jpg
-*.docx
-
-# Port-forward leftovers / debug
-nohup.out
-*.pid
+# python/venv
+.venv/
+__pycache__/
+*.pyc
