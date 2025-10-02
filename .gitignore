@@ -14,3 +14,6 @@ crash.log
 .venv/
 __pycache__/
 *.pyc
+
+# do not track tf provider cache
+terraform/.terraform/
