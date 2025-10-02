@@ -1,28 +1,42 @@
 name: build-test-deploy
 on:
-  push: { branches: [ "main" ] }
-  pull_request: { branches: [ "main" ] }
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: IBM Cloud CLI
+
+      - name: Setup QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Setup Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Install IBM Cloud CLI + plugins
         run: |
-          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+          curl -fsSL https://clis.cloud.ibm.com/install/linux | sudo sh
+          ibmcloud --version
           ibmcloud plugin install container-registry -f
           ibmcloud plugin install code-engine -f
-      - name: Buildx setup
-        run: |
-          docker buildx create --use || true
-          docker buildx inspect --bootstrap
-      - name: Build and push image
-        env: { IBMCLOUD_API_KEY: ${{ secrets.IBMCLOUD_API_KEY }} }
+
+      - name: Login to IBM Cloud & ICR
+        env:
+          IBMCLOUD_API_KEY: ${{ secrets.IBMCLOUD_API_KEY }}
         run: |
           ibmcloud login -r ${{ vars.IBM_REGION }} -g "${{ vars.IBM_RG }}" --apikey "$IBMCLOUD_API_KEY" -q
           ibmcloud cr region-set ${{ vars.ICR_REGION }}
           ibmcloud cr login
+
+      - name: Build and push image (linux/amd64)
+        run: |
           IMAGE="${{ vars.ICR_REGISTRY }}/${{ vars.ICR_NAMESPACE }}/transaction-api:${{ github.sha }}"
           docker buildx build --platform linux/amd64 -t "$IMAGE" ./app --push
           docker buildx imagetools create -t ${{ vars.ICR_REGISTRY }}/${{ vars.ICR_NAMESPACE }}/transaction-api:latest "$IMAGE"
@@ -31,12 +45,14 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: IBM Cloud CLI
+      - name: Install IBM Cloud CLI + CE plugin
         run: |
-          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+          curl -fsSL https://clis.cloud.ibm.com/install/linux | sudo sh
           ibmcloud plugin install code-engine -f
-      - name: Create registry secret (idempotent) and deploy
-        env: { IBMCLOUD_API_KEY: ${{ secrets.IBMCLOUD_API_KEY }} }
+
+      - name: Deploy to Code Engine
+        env:
+          IBMCLOUD_API_KEY: ${{ secrets.IBMCLOUD_API_KEY }}
         run: |
           ibmcloud login -r ${{ vars.IBM_REGION }} -g "${{ vars.IBM_RG }}" --apikey "$IBMCLOUD_API_KEY" -q
           ibmcloud ce project select -n ${{ vars.CE_PROJECT }}
@@ -50,3 +66,8 @@ jobs:
           ibmcloud ce application update --name transaction-api \
             --image ${{ vars.ICR_REGISTRY }}/${{ vars.ICR_NAMESPACE }}/transaction-api:latest \
             --registry-secret icr-secret --cpu 0.25 --memory 0.5G --port 8080
+
+      - name: Smoke test
+        run: |
+          APP_URL="$(ibmcloud ce application get --name transaction-api --output json | jq -r '.status.url')"
+          curl -fsS "${APP_URL}/healthz"
