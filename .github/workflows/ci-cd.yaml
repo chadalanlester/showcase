@@ -1,0 +1,52 @@
+name: build-test-deploy
+on:
+  push: { branches: [ "main" ] }
+  pull_request: { branches: [ "main" ] }
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: IBM Cloud CLI
+        run: |
+          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+          ibmcloud plugin install container-registry -f
+          ibmcloud plugin install code-engine -f
+      - name: Buildx setup
+        run: |
+          docker buildx create --use || true
+          docker buildx inspect --bootstrap
+      - name: Build and push image
+        env: { IBMCLOUD_API_KEY: ${{ secrets.IBMCLOUD_API_KEY }} }
+        run: |
+          ibmcloud login -r ${{ vars.IBM_REGION }} -g "${{ vars.IBM_RG }}" --apikey "$IBMCLOUD_API_KEY" -q
+          ibmcloud cr region-set ${{ vars.ICR_REGION }}
+          ibmcloud cr login
+          IMAGE="${{ vars.ICR_REGISTRY }}/${{ vars.ICR_NAMESPACE }}/transaction-api:${{ github.sha }}"
+          docker buildx build --platform linux/amd64 -t "$IMAGE" ./app --push
+          docker buildx imagetools create -t ${{ vars.ICR_REGISTRY }}/${{ vars.ICR_NAMESPACE }}/transaction-api:latest "$IMAGE"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: IBM Cloud CLI
+        run: |
+          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+          ibmcloud plugin install code-engine -f
+      - name: Create registry secret (idempotent) and deploy
+        env: { IBMCLOUD_API_KEY: ${{ secrets.IBMCLOUD_API_KEY }} }
+        run: |
+          ibmcloud login -r ${{ vars.IBM_REGION }} -g "${{ vars.IBM_RG }}" --apikey "$IBMCLOUD_API_KEY" -q
+          ibmcloud ce project select -n ${{ vars.CE_PROJECT }}
+          ibmcloud ce registry get -n icr-secret || \
+          ibmcloud ce registry create --name icr-secret --server ${{ vars.ICR_REGISTRY }} \
+            --username iamapikey --password "$IBMCLOUD_API_KEY"
+          ibmcloud ce application create --name transaction-api \
+            --image ${{ vars.ICR_REGISTRY }}/${{ vars.ICR_NAMESPACE }}/transaction-api:latest \
+            --registry-secret icr-secret --port 8080 --cpu 0.25 --memory 0.5G \
+            --max-scale 5 --min-scale 0 --env ENV=prod || \
+          ibmcloud ce application update --name transaction-api \
+            --image ${{ vars.ICR_REGISTRY }}/${{ vars.ICR_NAMESPACE }}/transaction-api:latest \
+            --registry-secret icr-secret --cpu 0.25 --memory 0.5G --port 8080
