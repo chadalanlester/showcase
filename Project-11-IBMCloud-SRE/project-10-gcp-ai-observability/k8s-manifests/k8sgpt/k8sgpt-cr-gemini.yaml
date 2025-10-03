@@ -1,0 +1,32 @@
+# showcase/project-10-gcp-ai-observability/k8s-manifests/k8sgpt/k8sgpt-cr-gemini.yaml
+apiVersion: k8sgpt.ai/v1alpha1
+kind: K8sGPT
+metadata:
+  name: k8sgpt-gemini
+  namespace: k8sgpt-operator
+spec:
+  ai:
+    enabled: true
+    provider: "gemini"        # K8sGPT supports Google Gemini / Vertex backends
+    model: "gemini-1.5-flash" # lightweight for free-tier
+    # If using Vertex AI, ensure Workload Identity or API key/ADC available to operator pod
+  noCache: true
+  filters:
+    - Ingress
+    - Service
+    - Pod
+    - ReplicaSet
+    - PersistentVolumeClaim
+    - Node
+  sink:
+    type: "webhook"
+    webhook:
+      endpoint: "https://example.com/k8sgpt-webhook" # replace with Slack/Cloud Run URL
+      headers:
+        X-Source: "k8sgpt"
+  scan:
+    interval: "30m"
+    includeExplanation: true
+```
+
+````yaml

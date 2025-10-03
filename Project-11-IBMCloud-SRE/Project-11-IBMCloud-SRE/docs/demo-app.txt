@@ -1,0 +1,5 @@
+NAME                    READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES                        SELECTOR
+deployment.apps/hello   2/2     2            2           92m   hello        nginxdemos/hello:plain-text   app=hello
+
+NAME            TYPE           CLUSTER-IP     EXTERNAL-IP                                                               PORT(S)        AGE   SELECTOR
+service/hello   LoadBalancer   172.20.14.49   add1f8cf77cb9444f9c7d6f6c136a4e1-2143926733.us-west-1.elb.amazonaws.com   80:30712/TCP   92m   app=hello

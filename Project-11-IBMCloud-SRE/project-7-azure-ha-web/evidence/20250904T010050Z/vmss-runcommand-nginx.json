@@ -1,0 +1,11 @@
+{
+  "value": [
+    {
+      "code": "ProvisioningState/succeeded",
+      "displayStatus": "Provisioning succeeded",
+      "level": "Info",
+      "message": "Enable succeeded: \n[stdout]\nactive\nHTTP/1.1 200 OK\r\n\n[stderr]\n+ systemctl is-active nginx\n+ curl -sI http://127.0.0.1/\n+ head -1\n",
+      "time": null
+    }
+  ]
+}

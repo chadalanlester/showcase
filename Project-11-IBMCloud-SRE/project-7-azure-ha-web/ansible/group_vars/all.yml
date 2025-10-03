@@ -1,0 +1,13 @@
+# ======================================================================
+# FILE: ansible/group_vars/all.yml
+# ======================================================================
+azure:
+  subscription_id: "{{ lookup('env','AZURE_SUBSCRIPTION_ID') | default('', true) }}"
+  tenant:         "{{ lookup('env','AZURE_TENANT') | default('', true) }}"
+  client_id:      "{{ lookup('env','AZURE_CLIENT_ID') | default('', true) }}"
+  client_secret:  "{{ lookup('env','AZURE_CLIENT_SECRET') | default('', true) }}"
+
+infra:
+  resource_group: "{{ lookup('pipe','terraform -chdir=../terraform output -raw resource_group') | default('p7-unknown-rg', true) }}"
+  vmss_name:      "{{ lookup('pipe','terraform -chdir=../terraform output -raw resource_group >/dev/null 2>&1 && terraform -chdir=../terraform output -json | jq -r .resource_group.value | sed s/-rg$//') | default('p7', true) }}-web-vmss"
+  # If the above dynamic trick is confusing, set vmss_name explicitly.

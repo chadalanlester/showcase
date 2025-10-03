@@ -1,0 +1,4 @@
+InstanceId    LatestModelApplied    Location    ModelDefinitionApplied    Name                 ProvisioningState    ResilientVMDeletionStatus    ResourceGroup    TimeCreated                        VmId
+------------  --------------------  ----------  ------------------------  -------------------  -------------------  ---------------------------  ---------------  ---------------------------------  ------------------------------------
+0             True                  eastus      VirtualMachineScaleSet    p7-8rk3k-web-vmss_0  Succeeded            Disabled                     p7-8rk3k-rg      2025-09-03T22:09:41.2093065+00:00  3dada392-6ad6-4fab-b9de-70e456c3f096
+3             True                  eastus      VirtualMachineScaleSet    p7-8rk3k-web-vmss_3  Succeeded            Disabled                     p7-8rk3k-rg      2025-09-03T22:09:41.2093065+00:00  80fd2fd3-d8b4-468a-abaa-c51560cd11ef

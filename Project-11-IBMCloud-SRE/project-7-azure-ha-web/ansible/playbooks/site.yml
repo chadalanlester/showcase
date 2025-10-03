@@ -1,0 +1,50 @@
+# ======================================================================
+# FILE: ansible/playbooks/site.yml
+# ======================================================================
+---
+- name: Update web content across VMSS via Custom Script Extension (no SSH)
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    # User passes -e "content_version=12345" to force re-run
+    content_version: "{{ content_version | default('manual') }}"
+    index_html: |
+      <html><head><title>Project 7</title></head>
+      <body>
+        <h1>Project 7 — VMSS content version {{ content_version }}</h1>
+      </body></html>
+
+  tasks:
+    - name: Render update script
+      copy:
+        dest: "/tmp/p7-update.sh"
+        mode: "0755"
+        content: |
+          #!/usr/bin/env bash
+          set -euo pipefail
+          sudo tee /var/www/html/index.html >/dev/null <<'HTML'
+          {{ index_html | replace("'", "'\"'\"'") }}
+          HTML
+          sudo systemctl reload nginx || sudo systemctl restart nginx
+
+    - name: Upload script to blob (optional) [skipped by default]
+      debug:
+        msg: "If you want to host scripts, use a SAS URL in settings.fileUris. Inline command used here."
+
+    - name: Trigger VMSS Custom Script Extension (idempotent with force_update_tag)
+      azure.azcollection.azure_rm_virtualmachinescalesetextension:
+        resource_group: "{{ infra.resource_group }}"
+        name: "CustomScript"
+        virtual_machine_scale_set_name: "{{ infra.vmss_name }}"
+        publisher: "Microsoft.Azure.Extensions"
+        type: "CustomScript"
+        type_handler_version: "2.1"
+        auto_upgrade_minor_version: true
+        settings:
+          commandToExecute: "/bin/bash p7-update.sh"
+          fileUris: []
+        protected_settings:
+          script: "{{ lookup('file','/tmp/p7-update.sh') | b64encode }}"
+        force_update_tag: "{{ content_version }}"

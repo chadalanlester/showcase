@@ -1,0 +1,72 @@
+# --- DISABLE all kube-system touching components ---
+kubeApiServer:
+  enabled: false
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeEtcd:
+  enabled: false
+kubeDns:
+  enabled: false
+kubelet:
+  enabled: false
+nodeExporter:
+  enabled: false
+
+# Disable all default recording/alerting rules to avoid webhook churn during bootstrap
+defaultRules:
+  create: false
+
+# Operator (no webhooks, no patch jobs)
+prometheusOperator:
+  enabled: true
+  admissionWebhooks:
+    enabled: false
+    patch:
+      enabled: false
+  tls:
+    enabled: false
+
+# Core Prometheus only (lightweight)
+prometheus:
+  prometheusSpec:
+    retention: 12h
+    scrapeInterval: 60s
+    evaluationInterval: 60s
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+      limits:
+        cpu: 200m
+        memory: 512Mi
+    serviceMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+
+# Grafana (ClusterIP)
+grafana:
+  admin:
+    existingSecret: grafana-admin-credentials
+  persistence:
+    enabled: false
+  service:
+    type: ClusterIP
+
+# Keep Alertmanager off (footprint)
+alertmanager:
+  enabled: false
+
+# kube-state-metrics is safe in its own namespace; keep tiny or turn off if needed
+kube-state-metrics:
+  enabled: true
+  resources:
+    requests:
+      cpu: 20m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi

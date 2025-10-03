@@ -1,37 +1,48 @@
-# secrets
-ibmcloud_api_key.txt
-
-# macOS
-.DS_Store
-
-# terraform
-terraform/.terraform/
-*.tfstate
-*.tfstate.backup
-crash.log
-
-# python/venv
-.venv/
-__pycache__/
-*.pyc
-
-# do not track tf provider cache
-terraform/.terraform/
 # Terraform
-**/.terraform/
-**/.terraform.lock.hcl
-*.tfvars
 *.tfstate
-*.tfstate.backup
-.crash
+*.tfstate.*
+.terraform/
+terraform.tfvars
+.terraform.lock.hcl
 
 # Helm cache
-**/.helm/
+.helm/
 
-# Local evidence/artifacts
-**/artifacts/
-**/screenshots/
+# Local / sensitive env
+.env
+.env.*
+*.pem
+*.key
+*.crt
+id_rsa*
+id_ed25519*
+kubeconfig*
+kubeconfig-*
 
-# Misc local files
-*.docx
+# OS / Editor noise
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*~
+
+# Temporary / generated
+*.log
+*.tmp
 *.bak
+*~
+*#
+~$*
+
+# Project artifacts not for Git
+artifacts/
+screenshots/
+*.png
+*.jpeg
+*.jpg
+*.docx
+
+# Port-forward leftovers / debug
+nohup.out
+*.pid

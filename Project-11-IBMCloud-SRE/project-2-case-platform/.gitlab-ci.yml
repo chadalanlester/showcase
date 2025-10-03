@@ -1,0 +1,30 @@
+stages:
+  - validate
+  - plan
+
+variables:
+  TERRAFORM_VERSION: "1.2.1"
+  TERRAFORM_ZIP: "terraform_${TERRAFORM_VERSION}_linux_amd64.zip"
+
+default:
+  before_script:
+    - apt update && apt install -y wget unzip
+    - wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/${TERRAFORM_ZIP}
+    - rm -rf terraform
+    - unzip -o ${TERRAFORM_ZIP}
+    - mv terraform /usr/local/bin/terraform || mv terraform_* /usr/local/bin/terraform
+    - terraform version
+
+validate:
+  stage: validate
+  script:
+    - terraform fmt -check
+    - terraform init -backend=false
+    - terraform validate
+
+plan:
+  stage: plan
+  script:
+    - terraform init
+    - terraform plan -lock=false
+  when: manual

@@ -1,0 +1,30 @@
+# showcase/project-10-gcp-ai-observability/k8s-manifests/k8sgpt/k8sgpt-cr-local.yaml
+apiVersion: k8sgpt.ai/v1alpha1
+kind: K8sGPT
+metadata:
+  name: k8sgpt-local
+  namespace: k8sgpt-operator
+spec:
+  ai:
+    enabled: true
+    provider: "localai"     # or "ollama"
+    model: "llama3"         # example
+    baseUrl: "http://ollama.monitoring.svc.cluster.local:11434/v1"
+  noCache: true
+  filters:
+    - Ingress
+    - Service
+    - Pod
+    - ReplicaSet
+    - PersistentVolumeClaim
+    - Node
+  sink:
+    type: "webhook"
+    webhook:
+      endpoint: "https://example.com/k8sgpt-webhook"
+  scan:
+    interval: "30m"
+    includeExplanation: true
+```
+
+````yaml

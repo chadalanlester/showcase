@@ -1,0 +1,15 @@
+Name                  ResourceGroup    Location    Type                                                                Status
+--------------------  ---------------  ----------  ------------------------------------------------------------------  --------
+p7-8rk3k-agw-pip      p7-8rk3k-rg      eastus      Microsoft.Network/publicIPAddresses
+p7-8rk3k-spoke-rt     p7-8rk3k-rg      eastus      Microsoft.Network/routeTables
+p7-8rk3k-spoke-vnet   p7-8rk3k-rg      eastus      Microsoft.Network/virtualNetworks
+p7-8rk3k-hub-vnet     p7-8rk3k-rg      eastus      Microsoft.Network/virtualNetworks
+p7-8rk3k-bastion-pip  p7-8rk3k-rg      eastus      Microsoft.Network/publicIPAddresses
+p7-8rk3k-fw-pip       p7-8rk3k-rg      eastus      Microsoft.Network/publicIPAddresses
+p7-8rk3k-law          p7-8rk3k-rg      eastus      Microsoft.OperationalInsights/workspaces
+p7-8rk3k-waf-policy   p7-8rk3k-rg      eastus      Microsoft.Network/applicationGatewayWebApplicationFirewallPolicies
+p7-8rk3k-fw           p7-8rk3k-rg      eastus      Microsoft.Network/azureFirewalls
+p7-8rk3k-bastion      p7-8rk3k-rg      eastus      Microsoft.Network/bastionHosts
+p7-8rk3k-dcr          p7-8rk3k-rg      eastus      Microsoft.Insights/dataCollectionRules
+p7-8rk3k-agw          p7-8rk3k-rg      eastus      Microsoft.Network/applicationGateways
+p7-8rk3k-web-vmss     p7-8rk3k-rg      eastus      Microsoft.Compute/virtualMachineScaleSets

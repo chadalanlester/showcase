@@ -1,0 +1,9 @@
+# ======================================================================
+# FILE: terraform/tfvars.example
+# ======================================================================
+prefix         = "p7"
+location       = "eastus"
+admin_username = "azureuser"
+vmss_capacity  = 2
+vmss_sku       = "Standard_B2s"
+# ssh_public_key comes from env TF_VAR_ssh_public_key at apply time

@@ -1,0 +1,34 @@
+[
+  {
+    "ParameterKey": "ProjectName",
+    "ParameterValue": "project-5-AWS_CloudFormation"
+  },
+  {
+    "ParameterKey": "VpcCidr",
+    "ParameterValue": "10.20.0.0/16"
+  },
+  {
+    "ParameterKey": "PublicSubnetCidr",
+    "ParameterValue": "10.20.1.0/24"
+  },
+  {
+    "ParameterKey": "InstanceType",
+    "ParameterValue": "t2.micro"
+  },
+  {
+    "ParameterKey": "KeyPairName",
+    "ParameterValue": "showcase-key"
+  },
+  {
+    "ParameterKey": "SSHAllowedCidr",
+    "ParameterValue": "68.0.176.59/32"
+  },
+  {
+    "ParameterKey": "EnableHttpHealthCheck",
+    "ParameterValue": "true"
+  },
+  {
+    "ParameterKey": "HttpHealthCheckPath",
+    "ParameterValue": "/"
+  }
+]

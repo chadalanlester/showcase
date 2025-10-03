@@ -1,0 +1,46 @@
+stages: [validate, plan, apply]
+
+variables:
+  TF_IN_AUTOMATION: "true"
+  TF_ROOT: "project-6-azure-aks-gitops/terraform/aks"
+
+image: hashicorp/terraform:1.7.5
+
+before_script:
+  - apk add --no-cache bash curl jq python3 py3-pip
+  - pip install azure-cli --break-system-packages || pip install azure-cli
+  - az login --service-principal -u "$AZURE_CLIENT_ID" -p "$AZURE_CLIENT_SECRET" --tenant "$AZURE_TENANT_ID"
+  - az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+  - cd "$TF_ROOT"
+  - terraform init -input=false
+
+validate:
+  stage: validate
+  script:
+    - terraform fmt -check
+    - terraform validate
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+
+plan:
+  stage: plan
+  script:
+    - printf 'subscription_id = "%s"\n' "$AZURE_SUBSCRIPTION_ID" > terraform.tfvars
+    - terraform plan -out=tfplan
+    - terraform show -no-color tfplan > plan.txt
+  artifacts:
+    paths:
+      - "$TF_ROOT/tfplan"
+      - "$TF_ROOT/plan.txt"
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "push"
+
+apply:
+  stage: apply
+  when: manual
+  allow_failure: false
+  script:
+    - terraform apply -auto-approve tfplan
+  needs: ["plan"]
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"

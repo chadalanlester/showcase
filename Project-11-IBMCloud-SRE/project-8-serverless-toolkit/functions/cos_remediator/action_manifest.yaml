@@ -1,0 +1,16 @@
+packages:
+serverless-toolkit:
+actions:
+cos-remediator:
+runtime: python:3.11
+web: true
+limits:
+timeout: 60000
+memory: 256
+annotations:
+require-whisk-auth: "${REMEDIATOR_TOKEN}"
+environment:
+SECRETS_MANAGER_URL: ${SECRETS_MANAGER_URL}
+SECRETS_MANAGER_API_KEY: ${SECRETS_MANAGER_API_KEY}
+SM_HMAC_SECRET_ID: ${SM_HMAC_SECRET_ID}
+SM_WEBHOOK_SECRET_ID: ${SM_WEBHOOK_SECRET_ID}

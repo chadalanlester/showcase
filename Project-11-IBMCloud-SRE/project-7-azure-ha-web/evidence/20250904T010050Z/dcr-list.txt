@@ -1,0 +1,3 @@
+Description    ImmutableId                           Location    Name          ProvisioningState    ResourceGroup
+-------------  ------------------------------------  ----------  ------------  -------------------  ---------------
+               dcr-edd90b4ab6ed471ba95e991f6f9ecb21  eastus      p7-8rk3k-dcr  Succeeded            p7-8rk3k-rg

@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trivia-api
+  namespace: resilient
+  labels:
+    app: trivia-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: trivia-api
+  template:
+    metadata:
+      labels:
+        app: trivia-api
+    spec:
+      containers:
+      - name: trivia-api
+        image: ghcr.io/chadalanlester/showcase/project-4-resilient-app:latest
+        ports:
+        - name: http
+          containerPort: 8080
+        readinessProbe:
+          httpGet: { path: /healthz, port: http }
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        livenessProbe:
+          httpGet: { path: /livez, port: http }
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        resources:
+          requests: { cpu: 100m, memory: 128Mi }
+          limits:   { cpu: 300m, memory: 256Mi }
