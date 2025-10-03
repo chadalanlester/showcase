@@ -17,3 +17,21 @@ __pycache__/
 
 # do not track tf provider cache
 terraform/.terraform/
+# Terraform
+**/.terraform/
+**/.terraform.lock.hcl
+*.tfvars
+*.tfstate
+*.tfstate.backup
+.crash
+
+# Helm cache
+**/.helm/
+
+# Local evidence/artifacts
+**/artifacts/
+**/screenshots/
+
+# Misc local files
+*.docx
+*.bak
