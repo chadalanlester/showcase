@@ -1,0 +1,6 @@
+NAME                           SYNC STATUS   HEALTH STATUS   REVISION                                   PROJECT
+application.argoproj.io/apps   Synced        Healthy         48d61e18317a173bf656ba16302deb22fdac0bdb   platform
+
+NAME                              AGE
+appproject.argoproj.io/default    3m40s
+appproject.argoproj.io/platform   2m43s

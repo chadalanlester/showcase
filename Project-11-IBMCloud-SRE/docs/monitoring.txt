@@ -1,0 +1,19 @@
+NAME                                                            READY   STATUS    RESTARTS   AGE
+pod/alertmanager-kube-prometheus-stack-alertmanager-0           2/2     Running   0          48m
+pod/kube-prometheus-stack-admission-patch-d5748                 0/1     Pending   0          26m
+pod/kube-prometheus-stack-grafana-568594544c-qplgw              3/3     Running   0          33m
+pod/kube-prometheus-stack-kube-state-metrics-6dcd966b95-8ms27   1/1     Running   0          72m
+pod/kube-prometheus-stack-operator-d59f784d-n4bw2               1/1     Running   0          49m
+pod/kube-prometheus-stack-prometheus-node-exporter-k769m        1/1     Running   0          72m
+pod/kube-prometheus-stack-prometheus-node-exporter-zmmd8        1/1     Running   0          72m
+pod/prometheus-kube-prometheus-stack-prometheus-0               2/2     Running   0          48m
+
+NAME                                                     TYPE           CLUSTER-IP       EXTERNAL-IP                                                               PORT(S)                         AGE
+service/alertmanager-operated                            ClusterIP      None             <none>                                                                    9093/TCP,9094/TCP,9094/UDP      48m
+service/kube-prometheus-stack-alertmanager               LoadBalancer   172.20.237.154   a18fba6ac19e2416cb5cff79118d43c8-1199529855.us-west-1.elb.amazonaws.com   9093:32404/TCP,8080:30383/TCP   72m
+service/kube-prometheus-stack-grafana                    LoadBalancer   172.20.144.241   a406b7d7e19ef443c99ede729fac0a55-1772841935.us-west-1.elb.amazonaws.com   80:31720/TCP                    72m
+service/kube-prometheus-stack-kube-state-metrics         ClusterIP      172.20.168.68    <none>                                                                    8080/TCP                        72m
+service/kube-prometheus-stack-operator                   ClusterIP      172.20.234.74    <none>                                                                    443/TCP                         72m
+service/kube-prometheus-stack-prometheus                 LoadBalancer   172.20.165.71    a47ede222933e431dbef933d1489dcc0-1115815001.us-west-1.elb.amazonaws.com   9090:30216/TCP,8080:32061/TCP   72m
+service/kube-prometheus-stack-prometheus-node-exporter   ClusterIP      172.20.6.218     <none>                                                                    9100/TCP                        72m
+service/prometheus-operated                              ClusterIP      None             <none>                                                                    9090/TCP                        48m
