@@ -1,0 +1,80 @@
+# Disable all subcharts Autopilot doesn’t allow / we don’t need
+prometheus-pushgateway:
+  enabled: false
+
+prometheus-node-exporter:
+  enabled: false
+
+kube-state-metrics:
+  enabled: false
+
+# Core server settings
+server:
+  service:
+    type: ClusterIP
+  persistentVolume:
+    enabled: false
+
+  # Minimal footprint
+  resources:
+    requests:
+      cpu: 20m
+      memory: 128Mi
+    limits:
+      cpu: 50m
+      memory: 256Mi
+
+  # Slow-start probes
+  readinessProbe:
+    httpGet: { path: /-/ready, port: 9090 }
+    initialDelaySeconds: 120
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 30
+  livenessProbe:
+    httpGet: { path: /-/healthy, port: 9090 }
+    initialDelaySeconds: 180
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 12
+
+  # IMPORTANT: cap the configmap-reload sidecar resources
+  configmapReload:
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        cpu: 50m
+        memory: 64Mi
+
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 65534
+  podSecurityContext:
+    runAsNonRoot: true
+
+# Minimal scrape config
+serverFiles:
+  prometheus.yml:
+    global:
+      scrape_interval: 60s
+      evaluation_interval: 60s
+    scrape_configs:
+      - job_name: "kubernetes-pods"
+        kubernetes_sd_configs: [{ role: pod }]
+        relabel_configs:
+          - action: keep
+            source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            regex: "true"
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            action: replace
+            target_label: __metrics_path__
+            regex: (.+)
+          - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_port]
+            action: replace
+            target_label: __address__
+            regex: (.+)
+            replacement: $1
+          - action: labelmap
+            regex: __meta_kubernetes_pod_label_(.+)

@@ -1,0 +1,63 @@
+name: project-6-aks-infra
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type APPLY to run terraform apply"
+        required: true
+        default: "PLAN"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    env:
+      TF_IN_AUTOMATION: "true"
+      ARM_USE_OIDC: "true"
+      ARM_CLIENT_ID: '${{ secrets.AZURE_CLIENT_ID }}'
+      ARM_TENANT_ID: '${{ secrets.AZURE_TENANT_ID }}'
+      ARM_SUBSCRIPTION_ID: '${{ secrets.AZ_SUBSCRIPTION_ID }}'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.5"
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: '${{ secrets.AZURE_CLIENT_ID }}'
+          tenant-id: '${{ secrets.AZURE_TENANT_ID }}'
+          subscription-id: '${{ secrets.AZ_SUBSCRIPTION_ID }}'
+
+      - name: Sanity
+        run: |
+          az account show
+          terraform -v
+
+      - name: Terraform init/validate/plan
+        working-directory: project-6-azure-aks-gitops/terraform/aks
+        run: |
+          terraform fmt -check
+          terraform init -input=false
+          printf 'subscription_id = "%s"\n' "${ARM_SUBSCRIPTION_ID}" > terraform.tfvars
+          terraform validate
+          terraform plan -out=tfplan
+
+      - name: Upload plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan
+          path: project-6-azure-aks-gitops/terraform/aks/tfplan
+
+      - name: Terraform apply
+        if: "${{ github.event.inputs.confirm == 'APPLY' }}"
+        working-directory: project-6-azure-aks-gitops/terraform/aks
+        run: terraform apply -auto-approve tfplan

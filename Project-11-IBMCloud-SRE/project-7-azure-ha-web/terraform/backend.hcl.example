@@ -1,0 +1,7 @@
+# ======================================================================
+# FILE: terraform/backend.hcl.example
+# ======================================================================
+resource_group_name  = "<STATE_RG_NAME>"
+storage_account_name = "<STATE_STORAGE_ACCOUNT_NAME>"
+container_name       = "tfstate"
+key                  = "project7/terraform.tfstate"

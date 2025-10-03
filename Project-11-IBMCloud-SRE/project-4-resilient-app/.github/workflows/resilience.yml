@@ -1,0 +1,38 @@
+name: Resilience Checks
+on:
+  workflow_dispatch: {}
+jobs:
+  chaos_load_slo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+
+      - name: Install script deps
+        run: pip install -r project-4-resilient-app/scripts/requirements.txt
+
+      # Optional kubeconfig (base64) to target a live cluster for chaos step
+      - name: Restore kubeconfig (optional)
+        if: ${{ secrets.KUBECONFIG_B64 != '' }}
+        env:
+          KUBECONFIG_B64: ${{ secrets.KUBECONFIG_B64 }}
+        run: |
+          mkdir -p $HOME/.kube
+          echo "$KUBECONFIG_B64" | base64 -d > $HOME/.kube/config
+          echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
+
+      # Chaos kill is only meaningful when KUBECONFIG is provided
+      - name: Chaos kill one pod
+        if: ${{ env.KUBECONFIG != '' }}
+        run: python project-4-resilient-app/scripts/chaos_kill_pods.py
+
+      - name: Load for 2 minutes
+        env:
+          CLIENTS: '50'
+          DURATION: '120'
+        run: python project-4-resilient-app/scripts/load_gen.py "${{ secrets.TRIVIA_URL }}"
+
+      - name: Check SLO on Prometheus
+        run: python project-4-resilient-app/scripts/check_slo.py "${{ secrets.PROM_URL }}"

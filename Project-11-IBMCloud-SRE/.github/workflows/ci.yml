@@ -1,0 +1,52 @@
+---
+name: CI
+
+on:
+  workflow_dispatch: {}
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  yamllint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install yamllint
+        run: pipx install yamllint
+      - name: Run yamllint
+        run: yamllint -s .
+
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.5
+      - name: Init + Validate Terraform modules
+        shell: bash
+        run: |
+          set -e
+          ROOTS=()
+          [[ -d project-1-multicloud-gitops/terraform/aws-eks ]] && \
+            ROOTS+=("project-1-multicloud-gitops/terraform/aws-eks")
+          [[ -d project-1-multicloud-gitops/terraform/gcp-gke ]] && \
+            ROOTS+=("project-1-multicloud-gitops/terraform/gcp-gke")
+
+          if [[ ${#ROOTS[@]} -eq 0 ]]; then
+            echo "No Terraform directories found. Skipping."
+            exit 0
+          fi
+
+          for d in "${ROOTS[@]}"; do
+            echo "==> $d"
+            pushd "$d" >/dev/null
+            terraform init -backend=false
+            terraform fmt -check
+            terraform validate || true
+            popd >/dev/null

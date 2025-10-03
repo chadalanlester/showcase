@@ -1,0 +1,7 @@
+NAME                                            SYNC STATUS   HEALTH STATUS   REVISION                                   PROJECT
+application.argoproj.io/apps                    Synced        Healthy         290ce10de1ae4ba3804959d4d260b01475734a04   platform
+application.argoproj.io/kube-prometheus-stack   OutOfSync     Healthy         59.1.0                                     platform
+
+NAME                              AGE
+appproject.argoproj.io/default    100m
+appproject.argoproj.io/platform   80m

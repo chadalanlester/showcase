@@ -1,0 +1,5 @@
+# showcase/project-10-gcp-ai-observability/k8s-manifests/namespaces/monitoring.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring

@@ -1,0 +1,21 @@
+== Mon Sep  1 09:31:57 MST 2025 ==
+Service:
+NAME         TYPE           CLUSTER-IP      EXTERNAL-IP                                                              PORT(S)        AGE   SELECTOR
+trivia-api   LoadBalancer   172.20.206.24   a4e1badd69ade4ab187558cd57eeb405-565001224.us-west-1.elb.amazonaws.com   80:31439/TCP   41m   app=trivia-api
+
+HPA:
+NAME             REFERENCE               TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+trivia-api-hpa   Deployment/trivia-api   cpu: 1%/60%   2         6         6          41m
+
+Deployment:
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+trivia-api   6/6     6            6           41m
+
+Pods:
+NAME                          READY   STATUS    RESTARTS   AGE     IP            NODE                                        NOMINATED NODE   READINESS GATES
+trivia-api-54d84c4796-582c9   1/1     Running   0          6m27s   10.10.2.238   ip-10-10-2-87.us-west-1.compute.internal    <none>           <none>
+trivia-api-54d84c4796-5h5zf   1/1     Running   0          6m41s   10.10.2.85    ip-10-10-2-87.us-west-1.compute.internal    <none>           <none>
+trivia-api-54d84c4796-7r22l   1/1     Running   0          85s     10.10.1.97    ip-10-10-1-145.us-west-1.compute.internal   <none>           <none>
+trivia-api-54d84c4796-f2l85   1/1     Running   0          6m42s   10.10.1.65    ip-10-10-1-145.us-west-1.compute.internal   <none>           <none>
+trivia-api-54d84c4796-w27wj   1/1     Running   0          15m     10.10.1.183   ip-10-10-1-145.us-west-1.compute.internal   <none>           <none>
+trivia-api-54d84c4796-wxdh2   1/1     Running   0          15m     10.10.2.23    ip-10-10-2-87.us-west-1.compute.internal    <none>           <none>

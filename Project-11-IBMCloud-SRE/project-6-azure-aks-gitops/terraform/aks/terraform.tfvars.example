@@ -1,0 +1,15 @@
+subscription_id = "b03c950e-9e0b-4b46-98f4-7ff621152c35"
+location        = "eastus2"
+name_prefix     = "p6"
+resource_group_name = "rg-aks-gitops-lab"
+
+# Optional: AKS version pin
+# kubernetes_version = "1.29.9"
+
+# GitOps repo details
+gitops_repo_url    = "https://github.com/chadalanlester/showcase.git"
+gitops_repo_branch = "main"
+gitops_repo_path   = "project-6-azure-aks-gitops/gitops/clusters/lab"
+
+# Optional policy initiative id (leave empty to skip)
+# policy_set_definition_id = "/providers/Microsoft.Authorization/policySetDefinitions/<GUID>"

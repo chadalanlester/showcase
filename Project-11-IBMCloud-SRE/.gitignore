@@ -1,0 +1,19 @@
+# secrets
+ibmcloud_api_key.txt
+
+# macOS
+.DS_Store
+
+# terraform
+terraform/.terraform/
+*.tfstate
+*.tfstate.backup
+crash.log
+
+# python/venv
+.venv/
+__pycache__/
+*.pyc
+
+# do not track tf provider cache
+terraform/.terraform/
