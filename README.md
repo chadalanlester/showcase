@@ -1,8 +1,6 @@
 # **🚀 SRE Portfolio Showcase**  
 **Chad Lester** | Site Reliability Engineer **Professional Portfolio for Prospective Employers**  
-![badge.svg](Attachments/B1D8BB60-F280-4EF7-A695-0208DD112FD3.svg)  
-   
-![badge.svg](Attachments/7F8C08F3-E6C3-42AC-9592-9D17F0AEFDCC.svg)  
+
   
 ## **👋 About This Portfolio**  
 This repository is **my professional showcase** as a **Site Reliability Engineer**. It contains **production-ready examples** and **working demonstrations** of enterprise SRE practices across multi-cloud environments.  
